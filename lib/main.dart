@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tictactoe/bloc/game_cubit.dart';
+import 'package:tictactoe/navigation/game_cubit_navigation_listener.dart';
 
-import 'bloc/bloc.dart';
 import 'router/app_router.dart';
 import 'services/sound_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize sound service
   await SoundService().initialize();
-  
+
   runApp(const TicTacToeApp());
 }
 
@@ -33,6 +34,11 @@ class TicTacToeApp extends StatelessWidget {
           fontFamily: 'SF Pro Display',
         ),
         routerConfig: AppRouter.router,
+        builder: (context, child) {
+          return child != null
+              ? GameCubitNavigationListener(child: child)
+              : const SizedBox.shrink();
+        },
       ),
     );
   }
