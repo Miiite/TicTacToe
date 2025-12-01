@@ -7,7 +7,8 @@ part 'player.freezed.dart';
 
 enum PlayerType {
   x('X'),
-  o('O');
+  o('O')
+  ;
 
   const PlayerType(this.symbol);
 
@@ -15,7 +16,7 @@ enum PlayerType {
 }
 
 @freezed
-class Player with _$Player {
+sealed class Player with _$Player {
   const factory Player({
     required PlayerType type,
     @Default(0) int score,

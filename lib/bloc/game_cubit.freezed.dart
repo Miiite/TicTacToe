@@ -55,12 +55,12 @@ extension GameStatePatterns on GameState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Game value)?  game,TResult Function( _Result value)?  result,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Game value)?  game,TResult Function( Result value)?  result,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case _Game() when game != null:
-return game(_that);case _Result() when result != null:
+return game(_that);case Result() when result != null:
 return result(_that);case _:
   return orElse();
 
@@ -79,12 +79,12 @@ return result(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Game value)  game,required TResult Function( _Result value)  result,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Game value)  game,required TResult Function( Result value)  result,}){
 final _that = this;
 switch (_that) {
 case _Initial():
 return initial(_that);case _Game():
-return game(_that);case _Result():
+return game(_that);case Result():
 return result(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -102,12 +102,12 @@ return result(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Game value)?  game,TResult? Function( _Result value)?  result,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Game value)?  game,TResult? Function( Result value)?  result,}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case _Game() when game != null:
-return game(_that);case _Result() when result != null:
+return game(_that);case Result() when result != null:
 return result(_that);case _:
   return null;
 
@@ -129,7 +129,7 @@ return result(_that);case _:
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Game() when game != null:
-return game(_that.playerTurn,_that.board,_that.xPlayer,_that.oPlayer);case _Result() when result != null:
+return game(_that.playerTurn,_that.board,_that.xPlayer,_that.oPlayer);case Result() when result != null:
 return result(_that.winner,_that.xScore,_that.oScore);case _:
   return orElse();
 
@@ -152,7 +152,7 @@ return result(_that.winner,_that.xScore,_that.oScore);case _:
 switch (_that) {
 case _Initial():
 return initial();case _Game():
-return game(_that.playerTurn,_that.board,_that.xPlayer,_that.oPlayer);case _Result():
+return game(_that.playerTurn,_that.board,_that.xPlayer,_that.oPlayer);case Result():
 return result(_that.winner,_that.xScore,_that.oScore);case _:
   throw StateError('Unexpected subclass');
 
@@ -174,7 +174,7 @@ return result(_that.winner,_that.xScore,_that.oScore);case _:
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Game() when game != null:
-return game(_that.playerTurn,_that.board,_that.xPlayer,_that.oPlayer);case _Result() when result != null:
+return game(_that.playerTurn,_that.board,_that.xPlayer,_that.oPlayer);case Result() when result != null:
 return result(_that.winner,_that.xScore,_that.oScore);case _:
   return null;
 
@@ -314,8 +314,8 @@ $PlayerCopyWith<$Res> get oPlayer {
 /// @nodoc
 
 
-class _Result implements GameState {
-   _Result({this.winner, this.xScore = 0, this.oScore = 0});
+class Result implements GameState {
+   Result({this.winner, this.xScore = 0, this.oScore = 0});
   
 
  final  PlayerType? winner;
@@ -326,13 +326,13 @@ class _Result implements GameState {
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$ResultCopyWith<_Result> get copyWith => __$ResultCopyWithImpl<_Result>(this, _$identity);
+$ResultCopyWith<Result> get copyWith => _$ResultCopyWithImpl<Result>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Result&&(identical(other.winner, winner) || other.winner == winner)&&(identical(other.xScore, xScore) || other.xScore == xScore)&&(identical(other.oScore, oScore) || other.oScore == oScore));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Result&&(identical(other.winner, winner) || other.winner == winner)&&(identical(other.xScore, xScore) || other.xScore == xScore)&&(identical(other.oScore, oScore) || other.oScore == oScore));
 }
 
 
@@ -348,8 +348,8 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class _$ResultCopyWith<$Res> implements $GameStateCopyWith<$Res> {
-  factory _$ResultCopyWith(_Result value, $Res Function(_Result) _then) = __$ResultCopyWithImpl;
+abstract mixin class $ResultCopyWith<$Res> implements $GameStateCopyWith<$Res> {
+  factory $ResultCopyWith(Result value, $Res Function(Result) _then) = _$ResultCopyWithImpl;
 @useResult
 $Res call({
  PlayerType? winner, int xScore, int oScore
@@ -360,17 +360,17 @@ $Res call({
 
 }
 /// @nodoc
-class __$ResultCopyWithImpl<$Res>
-    implements _$ResultCopyWith<$Res> {
-  __$ResultCopyWithImpl(this._self, this._then);
+class _$ResultCopyWithImpl<$Res>
+    implements $ResultCopyWith<$Res> {
+  _$ResultCopyWithImpl(this._self, this._then);
 
-  final _Result _self;
-  final $Res Function(_Result) _then;
+  final Result _self;
+  final $Res Function(Result) _then;
 
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? winner = freezed,Object? xScore = null,Object? oScore = null,}) {
-  return _then(_Result(
+  return _then(Result(
 winner: freezed == winner ? _self.winner : winner // ignore: cast_nullable_to_non_nullable
 as PlayerType?,xScore: null == xScore ? _self.xScore : xScore // ignore: cast_nullable_to_non_nullable
 as int,oScore: null == oScore ? _self.oScore : oScore // ignore: cast_nullable_to_non_nullable

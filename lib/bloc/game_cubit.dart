@@ -66,10 +66,10 @@ class GameState with _$GameState {
     PlayerType? winner,
     @Default(0) int xScore,
     @Default(0) int oScore,
-  }) = _Result;
+  }) = Result;
 }
 
-extension ResultExtensions on _Result {
+extension ResultExtensions on Result {
   bool get isXWinner => winner == PlayerType.x;
   bool get isOWinner => winner == PlayerType.o;
   bool get isDraw => winner == null;

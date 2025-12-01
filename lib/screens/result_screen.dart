@@ -237,6 +237,14 @@ class _ActionButtons extends HookWidget {
       duration: const Duration(milliseconds: 800),
     );
 
+    useEffect(
+      () {
+        controller.forward();
+        return controller.dispose;
+      },
+      [],
+    );
+
     return FadeTransition(
       opacity: CurvedAnimation(
         parent: controller,

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tictactoe/models/player.dart';
+import 'package:tictactoe/services/sound_service.dart';
 import 'package:tictactoe/utils/game_colors.dart';
-
-import '../models/models.dart';
-import '../services/sound_service.dart';
 
 class GameCell extends StatefulWidget {
   final int index;
@@ -22,7 +21,8 @@ class GameCell extends StatefulWidget {
   State<GameCell> createState() => _GameCellState();
 }
 
-class _GameCellState extends State<GameCell> with SingleTickerProviderStateMixin {
+class _GameCellState extends State<GameCell>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   bool _isPressed = false;
@@ -115,10 +115,11 @@ class _GameCellState extends State<GameCell> with SingleTickerProviderStateMixin
                             : const Color(0xFF4ECDC4),
                         shadows: [
                           Shadow(
-                            color: (isX
-                                    ? const Color(0xFFE63946)
-                                    : const Color(0xFF4ECDC4))
-                                .withAlpha(130),
+                            color:
+                                (isX
+                                        ? const Color(0xFFE63946)
+                                        : const Color(0xFF4ECDC4))
+                                    .withAlpha(130),
                             blurRadius: 12,
                           ),
                         ],
