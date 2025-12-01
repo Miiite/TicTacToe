@@ -8,7 +8,13 @@ import 'package:tictactoe/models/player.dart';
 part 'game_cubit.freezed.dart';
 
 class GameCubit extends Cubit<GameState> {
-  GameCubit() : super(GameState.initial());
+  GameCubit()
+    : super(
+        GameState.initial(
+          xPlayer: Player(type: PlayerType.x),
+          oPlayer: Player(type: PlayerType.o),
+        ),
+      );
 
   static const int gridSize = 9;
   static const List<List<int>> winPatterns = [
@@ -27,11 +33,31 @@ class GameCubit extends Cubit<GameState> {
   void selectCell(int index) {
     state.mapOrNull(
       game: ((game) {
-        final newState = game.selectCell(index).nextTurn();
+        final newState = game.selectCell(index);
+
         if (!newState.isGameOver) {
-          emit(newState);
+          emit(newState.nextTurn());
+        } else if (newState.isDraw) {
+          emit(
+            GameState.result(
+              oPlayer: state.oPlayer,
+              xPlayer: state.xPlayer,
+            ),
+          );
         } else {
-          emit(GameState.result());
+          final winner = newState.getWinner();
+
+          emit(
+            GameState.result(
+              oPlayer: state.oPlayer.copyWith(
+                score: state.oPlayer.score + (winner == PlayerType.o ? 1 : 0),
+              ),
+              xPlayer: state.xPlayer.copyWith(
+                score: state.xPlayer.score + (winner == PlayerType.x ? 1 : 0),
+              ),
+              winner: winner,
+            ),
+          );
         }
       }),
     );
@@ -42,20 +68,30 @@ class GameCubit extends Cubit<GameState> {
       GameState.game(
         playerTurn: random.nextBool() ? PlayerType.x : PlayerType.o,
         board: List.filled(gridSize, null),
-        oPlayer: Player(type: PlayerType.o),
-        xPlayer: Player(type: PlayerType.x),
+        oPlayer: state.oPlayer,
+        xPlayer: state.xPlayer,
       ),
     );
   }
 
-  void newGame() {
-    resetGame();
+  void newGameRound() {
+    emit(
+      GameState.game(
+        playerTurn: random.nextBool() ? PlayerType.x : PlayerType.o,
+        board: List.filled(gridSize, null),
+        oPlayer: state.oPlayer,
+        xPlayer: state.xPlayer,
+      ),
+    );
   }
 }
 
 @freezed
-class GameState with _$GameState {
-  factory GameState.initial() = _Initial;
+sealed class GameState with _$GameState {
+  factory GameState.initial({
+    required Player xPlayer,
+    required Player oPlayer,
+  }) = _Initial;
   factory GameState.game({
     required PlayerType playerTurn,
     required List<PlayerType?> board,
@@ -64,8 +100,8 @@ class GameState with _$GameState {
   }) = _Game;
   factory GameState.result({
     PlayerType? winner,
-    @Default(0) int xScore,
-    @Default(0) int oScore,
+    required Player xPlayer,
+    required Player oPlayer,
   }) = Result;
 }
 

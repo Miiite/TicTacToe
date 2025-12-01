@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:tictactoe/bloc/game_cubit.dart';
 import 'package:tictactoe/models/player.dart';
 import 'package:tictactoe/utils/game_colors.dart';
+
+const _animationDuration = Duration(milliseconds: 800);
 
 class ResultScreen extends StatelessWidget {
   const ResultScreen({super.key});
@@ -15,22 +18,23 @@ class ResultScreen extends StatelessWidget {
           current.maybeMap(result: (value) => true, orElse: () => false),
       builder: (context, state) {
         return Scaffold(
-          body: Container(
-            decoration: BoxDecoration(
-              gradient: GameColors.backgroundGradient,
-            ),
-            child: SafeArea(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: .center,
-                  children: [
-                    _GameResultMessage(),
-                    const SizedBox(height: 60),
-                    _AnimatedScoreSummary(),
-                    const SizedBox(height: 60),
-                    // Action buttons
-                    _ActionButtons(),
-                  ],
+          body: _ConfettiCanon(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: GameColors.backgroundGradient,
+              ),
+              child: SafeArea(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: .center,
+                    children: [
+                      _GameResultMessage(),
+                      const SizedBox(height: 60),
+                      _AnimatedScoreSummary(),
+                      const SizedBox(height: 60),
+                      _ActionButtons(),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -38,6 +42,75 @@ class ResultScreen extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class _ConfettiCanon extends StatefulWidget {
+  const _ConfettiCanon({
+    required this.child,
+  });
+
+  final Widget child;
+
+  @override
+  State<_ConfettiCanon> createState() => _ConfettiCanonState();
+}
+
+class _ConfettiCanonState extends State<_ConfettiCanon> {
+  late final ConfettiController leftCanonController;
+  late final ConfettiController rightCanonController;
+
+  final confettiOptions = ConfettiOptions(
+    particleCount: 100,
+    spread: 70,
+    startVelocity: 30,
+    y: 0.5,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+
+    final isDraw = context.read<GameCubit>().state.maybeMap(
+      result: (value) => value.isDraw,
+      orElse: () => false,
+    );
+
+    Future.delayed(Duration(seconds: 1), () {
+      final localContext = context;
+      if (localContext.mounted) {
+        leftCanonController = Confetti.launch(
+          localContext,
+          options: confettiOptions.copyWith(
+            particleCount: isDraw ? 1 : 100,
+            x: 0,
+            angle: 60,
+          ),
+        );
+
+        rightCanonController = Confetti.launch(
+          localContext,
+          options: confettiOptions.copyWith(
+            particleCount: isDraw ? 1 : 100,
+            x: 1,
+            angle: 120,
+          ),
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    leftCanonController.kill();
+    rightCanonController.kill();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
   }
 }
 
@@ -67,7 +140,7 @@ class _GameResultMessage extends HookWidget {
         : Colors.white70;
 
     final controller = useAnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: _animationDuration,
     );
 
     useEffect(
@@ -173,7 +246,7 @@ class _AnimatedScoreSummary extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final controller = useAnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: _animationDuration,
     );
 
     useEffect(
@@ -222,10 +295,7 @@ class _XPlayerScore extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final score = context.select((GameCubit cubit) {
-      return cubit.state.maybeMap(
-        result: (value) => value.xScore,
-        orElse: () => 0,
-      );
+      return cubit.state.xPlayer.score;
     });
 
     return _ScoreSummary(
@@ -242,10 +312,7 @@ class _OPlayerScore extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final score = context.select((GameCubit cubit) {
-      return cubit.state.maybeMap(
-        result: (value) => value.oScore,
-        orElse: () => 0,
-      );
+      return cubit.state.oPlayer.score;
     });
 
     return _ScoreSummary(
@@ -262,7 +329,7 @@ class _ActionButtons extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final controller = useAnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: _animationDuration,
     );
 
     useEffect(
@@ -277,10 +344,9 @@ class _ActionButtons extends HookWidget {
       opacity: context.fadeAnimation(controller: controller),
       child: Column(
         children: [
-          // Play Again button
           GestureDetector(
             onTap: () {
-              context.read<GameCubit>().resetGame();
+              context.read<GameCubit>().newGameRound();
             },
             child: Container(
               padding: const .symmetric(
@@ -335,10 +401,9 @@ class _ActionButtons extends HookWidget {
             ),
           ),
           const SizedBox(height: 16),
-          // Home button
           TextButton.icon(
             onPressed: () {
-              context.read<GameCubit>().newGame();
+              context.read<GameCubit>().resetGame();
             },
             icon: const Icon(
               Icons.home_rounded,

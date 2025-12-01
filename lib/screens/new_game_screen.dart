@@ -79,7 +79,7 @@ class NewGameScreen extends StatelessWidget {
                 // Play button
                 GestureDetector(
                   onTap: () {
-                    context.read<GameCubit>().newGame();
+                    context.read<GameCubit>().newGameRound();
                   },
                   child: Container(
                     padding: const .symmetric(
