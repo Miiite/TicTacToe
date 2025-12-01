@@ -22,7 +22,7 @@ mixin _$GameState {
     required TResult Function() initial,
     required TResult Function(
       PlayerType playerTurn,
-      List<PlayerType?>? board,
+      List<PlayerType?> board,
       int xScore,
       int oScore,
     )
@@ -34,7 +34,7 @@ mixin _$GameState {
     TResult? Function()? initial,
     TResult? Function(
       PlayerType playerTurn,
-      List<PlayerType?>? board,
+      List<PlayerType?> board,
       int xScore,
       int oScore,
     )?
@@ -46,7 +46,7 @@ mixin _$GameState {
     TResult Function()? initial,
     TResult Function(
       PlayerType playerTurn,
-      List<PlayerType?>? board,
+      List<PlayerType?> board,
       int xScore,
       int oScore,
     )?
@@ -141,7 +141,7 @@ class _$InitialImpl implements _Initial {
     required TResult Function() initial,
     required TResult Function(
       PlayerType playerTurn,
-      List<PlayerType?>? board,
+      List<PlayerType?> board,
       int xScore,
       int oScore,
     )
@@ -157,7 +157,7 @@ class _$InitialImpl implements _Initial {
     TResult? Function()? initial,
     TResult? Function(
       PlayerType playerTurn,
-      List<PlayerType?>? board,
+      List<PlayerType?> board,
       int xScore,
       int oScore,
     )?
@@ -173,7 +173,7 @@ class _$InitialImpl implements _Initial {
     TResult Function()? initial,
     TResult Function(
       PlayerType playerTurn,
-      List<PlayerType?>? board,
+      List<PlayerType?> board,
       int xScore,
       int oScore,
     )?
@@ -235,7 +235,7 @@ abstract class _$$GameImplCopyWith<$Res> {
   @useResult
   $Res call({
     PlayerType playerTurn,
-    List<PlayerType?>? board,
+    List<PlayerType?> board,
     int xScore,
     int oScore,
   });
@@ -254,7 +254,7 @@ class __$$GameImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? playerTurn = null,
-    Object? board = freezed,
+    Object? board = null,
     Object? xScore = null,
     Object? oScore = null,
   }) {
@@ -264,10 +264,10 @@ class __$$GameImplCopyWithImpl<$Res>
             ? _value.playerTurn
             : playerTurn // ignore: cast_nullable_to_non_nullable
                   as PlayerType,
-        board: freezed == board
+        board: null == board
             ? _value._board
             : board // ignore: cast_nullable_to_non_nullable
-                  as List<PlayerType?>?,
+                  as List<PlayerType?>,
         xScore: null == xScore
             ? _value.xScore
             : xScore // ignore: cast_nullable_to_non_nullable
@@ -286,21 +286,19 @@ class __$$GameImplCopyWithImpl<$Res>
 class _$GameImpl implements _Game {
   _$GameImpl({
     required this.playerTurn,
-    final List<PlayerType?>? board,
+    required final List<PlayerType?> board,
     this.xScore = 0,
     this.oScore = 0,
   }) : _board = board;
 
   @override
   final PlayerType playerTurn;
-  final List<PlayerType?>? _board;
+  final List<PlayerType?> _board;
   @override
-  List<PlayerType?>? get board {
-    final value = _board;
-    if (value == null) return null;
+  List<PlayerType?> get board {
     if (_board is EqualUnmodifiableListView) return _board;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
+    return EqualUnmodifiableListView(_board);
   }
 
   @override
@@ -350,7 +348,7 @@ class _$GameImpl implements _Game {
     required TResult Function() initial,
     required TResult Function(
       PlayerType playerTurn,
-      List<PlayerType?>? board,
+      List<PlayerType?> board,
       int xScore,
       int oScore,
     )
@@ -366,7 +364,7 @@ class _$GameImpl implements _Game {
     TResult? Function()? initial,
     TResult? Function(
       PlayerType playerTurn,
-      List<PlayerType?>? board,
+      List<PlayerType?> board,
       int xScore,
       int oScore,
     )?
@@ -382,7 +380,7 @@ class _$GameImpl implements _Game {
     TResult Function()? initial,
     TResult Function(
       PlayerType playerTurn,
-      List<PlayerType?>? board,
+      List<PlayerType?> board,
       int xScore,
       int oScore,
     )?
@@ -434,13 +432,13 @@ class _$GameImpl implements _Game {
 abstract class _Game implements GameState {
   factory _Game({
     required final PlayerType playerTurn,
-    final List<PlayerType?>? board,
+    required final List<PlayerType?> board,
     final int xScore,
     final int oScore,
   }) = _$GameImpl;
 
   PlayerType get playerTurn;
-  List<PlayerType?>? get board;
+  List<PlayerType?> get board;
   int get xScore;
   int get oScore;
 
@@ -533,7 +531,7 @@ class _$ResultImpl implements _Result {
     required TResult Function() initial,
     required TResult Function(
       PlayerType playerTurn,
-      List<PlayerType?>? board,
+      List<PlayerType?> board,
       int xScore,
       int oScore,
     )
@@ -549,7 +547,7 @@ class _$ResultImpl implements _Result {
     TResult? Function()? initial,
     TResult? Function(
       PlayerType playerTurn,
-      List<PlayerType?>? board,
+      List<PlayerType?> board,
       int xScore,
       int oScore,
     )?
@@ -565,7 +563,7 @@ class _$ResultImpl implements _Result {
     TResult Function()? initial,
     TResult Function(
       PlayerType playerTurn,
-      List<PlayerType?>? board,
+      List<PlayerType?> board,
       int xScore,
       int oScore,
     )?
