@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tictactoe/bloc/game_cubit.dart';
+import 'package:tictactoe/models/player.dart';
 import 'package:tictactoe/utils/game_colors.dart';
 
 class ResultScreen extends StatefulWidget {
@@ -51,10 +53,21 @@ class _ResultScreenState extends State<ResultScreen>
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GameCubit, GameState>(
+      buildWhen: (previous, current) =>
+          current.maybeMap(result: (value) => true, orElse: () => false),
       builder: (context, state) {
-        final isXWinner = false;
-        final isOWinner = false;
-        final isDraw = false;
+        final isXWinner = state.maybeMap(
+          result: (value) => value.isXWinner,
+          orElse: () => false,
+        );
+        final isOWinner = state.maybeMap(
+          result: (value) => value.isOWinner,
+          orElse: () => false,
+        );
+        final isDraw = state.maybeMap(
+          result: (value) => value.isDraw,
+          orElse: () => false,
+        );
 
         final winnerColor = isXWinner
             ? const Color(0xFFE63946)
@@ -179,20 +192,23 @@ class _ResultScreenState extends State<ResultScreen>
                         child: Row(
                           mainAxisAlignment: .spaceEvenly,
                           children: [
-                            _buildScoreSummary(
-                              'X',
-                              99,
-                              const Color(0xFFE63946),
+                            _ScoreSummary(
+                              symbol: PlayerType.x.symbol,
+                              score: 99,
+                              color: const Color(0xFFE63946),
                             ),
-                            Container(
+                            SizedBox(
                               width: 1,
                               height: 50,
-                              color: Colors.white.withAlpha(50),
+                              child: VerticalDivider(
+                                color: Colors.white.withAlpha(50),
+                                thickness: 1,
+                              ),
                             ),
-                            _buildScoreSummary(
-                              'O',
-                              99,
-                              const Color(0xFF4ECDC4),
+                            _ScoreSummary(
+                              symbol: PlayerType.o.symbol,
+                              score: 99,
+                              color: const Color(0xFF4ECDC4),
                             ),
                           ],
                         ),
@@ -200,90 +216,7 @@ class _ResultScreenState extends State<ResultScreen>
                     ),
                     const SizedBox(height: 60),
                     // Action buttons
-                    FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: Column(
-                        children: [
-                          // Play Again button
-                          GestureDetector(
-                            onTap: () {
-                              context.read<GameCubit>().resetGame();
-                              context.go('/game');
-                            },
-                            child: Container(
-                              padding: const .symmetric(
-                                horizontal: 48,
-                                vertical: 16,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFFE63946),
-                                    Color(0xFFFF6B6B),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(50),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(
-                                      0xFFE63946,
-                                    ).withAlpha(100),
-                                    blurRadius: 20,
-                                    offset: const Offset(0, 8),
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.replay_rounded,
-                                    color: Colors.white,
-                                    size: 24,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'PLAY AGAIN',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: .w600,
-                                      color: Colors.white,
-                                      letterSpacing: 2,
-                                      shadows: [
-                                        Shadow(
-                                          color: Colors.black.withAlpha(50),
-                                          offset: const Offset(0, 2),
-                                          blurRadius: 4,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          // Home button
-                          TextButton.icon(
-                            onPressed: () {
-                              context.read<GameCubit>().newGame();
-                              context.go('/');
-                            },
-                            icon: const Icon(
-                              Icons.home_rounded,
-                              color: Colors.white54,
-                            ),
-                            label: Text(
-                              'BACK TO HOME',
-                              style: TextStyle(
-                                color: Colors.white.withAlpha(140),
-                                letterSpacing: 1,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    _ActionButtons(),
                   ],
                 ),
               ),
@@ -293,8 +226,119 @@ class _ResultScreenState extends State<ResultScreen>
       },
     );
   }
+}
 
-  Widget _buildScoreSummary(String symbol, int score, Color color) {
+class _ActionButtons extends HookWidget {
+  const _ActionButtons();
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = useAnimationController(
+      duration: const Duration(milliseconds: 800),
+    );
+
+    return FadeTransition(
+      opacity: CurvedAnimation(
+        parent: controller,
+        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
+      ),
+      child: Column(
+        children: [
+          // Play Again button
+          GestureDetector(
+            onTap: () {
+              context.read<GameCubit>().resetGame();
+            },
+            child: Container(
+              padding: const .symmetric(
+                horizontal: 48,
+                vertical: 16,
+              ),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFFE63946),
+                    Color(0xFFFF6B6B),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(50),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(
+                      0xFFE63946,
+                    ).withAlpha(100),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.replay_rounded,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'PLAY AGAIN',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: .w600,
+                      color: Colors.white,
+                      letterSpacing: 2,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withAlpha(50),
+                          offset: const Offset(0, 2),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Home button
+          TextButton.icon(
+            onPressed: () {
+              context.read<GameCubit>().newGame();
+              context.go('/');
+            },
+            icon: const Icon(
+              Icons.home_rounded,
+              color: Colors.white54,
+            ),
+            label: Text(
+              'BACK TO HOME',
+              style: TextStyle(
+                color: Colors.white.withAlpha(140),
+                letterSpacing: 1,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ScoreSummary extends StatelessWidget {
+  const _ScoreSummary({
+    required this.symbol,
+    required this.score,
+    required this.color,
+  });
+
+  final String symbol;
+  final int score;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
         Text(

@@ -63,9 +63,16 @@ class GameState with _$GameState {
     required Player oPlayer,
   }) = _Game;
   factory GameState.result({
+    PlayerType? winner,
     @Default(0) int xScore,
     @Default(0) int oScore,
   }) = _Result;
+}
+
+extension ResultExtensions on _Result {
+  bool get isXWinner => winner == PlayerType.x;
+  bool get isOWinner => winner == PlayerType.o;
+  bool get isDraw => winner == null;
 }
 
 extension on _Game {

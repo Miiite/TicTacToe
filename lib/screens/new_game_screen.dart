@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tictactoe/bloc/game_cubit.dart';
 import 'package:tictactoe/utils/game_colors.dart';
-
-import '../bloc/game_cubit.dart';
 
 class NewGameScreen extends StatelessWidget {
   const NewGameScreen({super.key});
@@ -82,7 +81,6 @@ class NewGameScreen extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     context.read<GameCubit>().newGame();
-                    context.go('/game');
                   },
                   child: Container(
                     padding: const .symmetric(

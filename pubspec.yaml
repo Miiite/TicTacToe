@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.9.2
+  sdk: ^3.10.0
 
 dependencies:
   flutter:
@@ -15,10 +15,11 @@ dependencies:
   flutter_bloc: ^9.1.0
   
   # Model classes
-  freezed_annotation: ^2.4.4
+  freezed_annotation: ^3.1.0
   
   # Navigation
   go_router: ^15.1.2
+  flutter_hooks: ^0.21.3+1
 
 dev_dependencies:
   flutter_test:
@@ -26,8 +27,12 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   
   # Code generation
-  build_runner: ^2.4.14
-  freezed: ^2.5.8
+  build_runner: ^2.10.4
+  freezed: ^3.2.3
+
+dependency_overrides:
+  analysis_server_plugin: ^0.2.0
+  analyzer: ^8.1.0
 
 flutter:
   uses-material-design: true

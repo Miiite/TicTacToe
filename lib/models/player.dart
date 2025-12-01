@@ -5,7 +5,14 @@ import 'package:tictactoe/utils/game_colors.dart';
 
 part 'player.freezed.dart';
 
-enum PlayerType { x, o }
+enum PlayerType {
+  x('X'),
+  o('O');
+
+  const PlayerType(this.symbol);
+
+  final String symbol;
+}
 
 @freezed
 class Player with _$Player {
@@ -16,7 +23,7 @@ class Player with _$Player {
 
   const Player._();
 
-  String get symbol => type == PlayerType.x ? 'X' : 'O';
+  String get symbol => type.symbol;
 
   Color get color => type == PlayerType.x ? GameColors.red : GameColors.green;
 }
