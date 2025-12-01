@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:tictactoe/bloc/game_cubit.dart';
+import 'package:tictactoe/models/player.dart';
 import 'package:tictactoe/utils/game_colors.dart';
+import 'package:tictactoe/widgets/main_button.dart';
 
 class NewGameScreen extends StatelessWidget {
   const NewGameScreen({super.key});
@@ -48,28 +50,20 @@ class _Title extends StatelessWidget {
         Row(
           mainAxisAlignment: .center,
           children: [
-            Text(
-              'TIC',
-              style: TextStyle(
-                fontSize: 48,
-                fontWeight: .w300,
-                color: Colors.white.withAlpha(230),
-                letterSpacing: 8,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Container(
-              padding: const .all(12),
+            DecoratedBox(
               decoration: BoxDecoration(
                 color: const Color(0xFFE63946),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Text(
-                'X',
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: .bold,
-                  color: Colors.white,
+              child: Padding(
+                padding: const .all(12),
+                child: Text(
+                  PlayerType.x.symbol.toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: .bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -80,8 +74,8 @@ class _Title extends StatelessWidget {
                 color: const Color(0xFF4ECDC4),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Text(
-                'O',
+              child: Text(
+                PlayerType.o.symbol.toUpperCase(),
                 style: TextStyle(
                   fontSize: 36,
                   fontWeight: .bold,
@@ -91,11 +85,13 @@ class _Title extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 16),
         Text(
-          'TAC TOE',
+          'TIC TAC TOE',
+          textAlign: .center,
           style: TextStyle(
             fontSize: 48,
+
             fontWeight: .w300,
             color: Colors.white.withAlpha(230),
             letterSpacing: 16,
@@ -107,60 +103,16 @@ class _Title extends StatelessWidget {
 }
 
 class _PlayButton extends StatelessWidget {
-  const _PlayButton({super.key});
+  const _PlayButton();
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return MainButton(
       onTap: () {
         context.read<GameCubit>().newGameRound();
       },
-      child: Container(
-        padding: const .symmetric(
-          horizontal: 64,
-          vertical: 20,
-        ),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFFE63946), Color(0xFFFF6B6B)],
-          ),
-          borderRadius: BorderRadius.circular(50),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFFE63946).withAlpha(100),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.play_arrow_rounded,
-              color: Colors.white,
-              size: 32,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'NEW GAME',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: .w600,
-                color: Colors.white,
-                letterSpacing: 2,
-                shadows: [
-                  Shadow(
-                    color: Colors.black.withAlpha(50),
-                    offset: const Offset(0, 2),
-                    blurRadius: 4,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      icon: Icons.play_arrow_rounded,
+      title: 'NEW GAME',
     );
   }
 }

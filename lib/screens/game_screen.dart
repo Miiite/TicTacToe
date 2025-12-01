@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tictactoe/bloc/game_cubit.dart';
 import 'package:tictactoe/models/player.dart';
 import 'package:tictactoe/utils/game_colors.dart';
+import 'package:tictactoe/widgets/animated_score_summary.dart';
 import 'package:tictactoe/widgets/game_cell.dart';
 
 class GameScreen extends StatelessWidget {
@@ -10,10 +11,10 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentColorGradient = context.select((GameCubit cubit){
+    final currentColorGradient = context.select((GameCubit cubit) {
       return cubit.state.maybeMap(
         game: (value) {
-          return switch(value.playerTurn){
+          return switch (value.playerTurn) {
             PlayerType.x => GameColors.redGradient,
             PlayerType.o => GameColors.greenGradient,
           };
@@ -24,7 +25,14 @@ class GameScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('TIC TAC TOE'),
+        title: const Text(
+          'TIC TAC TOE',
+          style: TextStyle(
+            fontSize: 24,
+            color: Colors.white,
+            fontWeight: .bold,
+          ),
+        ),
         backgroundColor: Colors.transparent,
       ),
       extendBodyBehindAppBar: true,
@@ -42,7 +50,10 @@ class GameScreen extends StatelessWidget {
                   child: _GameBoard(),
                 ),
                 const Spacer(),
-                _ScoreCards(),
+                AnimatedScoreSummary(
+                  duration: Duration.zero,
+                  backgroundColor: const Color(0xFF2D3E50),
+                ),
                 const Spacer(),
                 _ResetBoardButton(),
                 const SizedBox(height: 16),
@@ -129,89 +140,6 @@ class _ResetBoardButton extends StatelessWidget {
           color: Colors.white.withAlpha(140),
           letterSpacing: 1,
         ),
-      ),
-    );
-  }
-}
-
-class _ScoreCards extends StatelessWidget {
-  const _ScoreCards();
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<GameCubit, GameState>(
-      buildWhen: (previous, current) =>
-          current.mapOrNull(
-            game: (value) => value,
-          ) !=
-          null,
-      builder: (context, state) {
-        final xPlayer = state.mapOrNull(game: (value) => value.xPlayer);
-        final oPlayer = state.mapOrNull(game: (value) => value.oPlayer);
-
-        return Row(
-          mainAxisAlignment: .spaceEvenly,
-          children: [
-            if (xPlayer != null)
-              _ScoreCard(
-                player: xPlayer,
-              ),
-            if (oPlayer != null)
-              _ScoreCard(
-                player: oPlayer,
-              ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class _ScoreCard extends StatelessWidget {
-  const _ScoreCard({
-    required this.player,
-  });
-
-  final Player player;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const .symmetric(horizontal: 32, vertical: 16),
-      decoration: BoxDecoration(
-        gradient: GameColors.cellGradient,
-        borderRadius: BorderRadius.circular(20),
-        border: .all(
-          color: Colors.white.withAlpha(25),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        children: [
-          Text(
-            player.symbol,
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: .bold,
-              color: player.color,
-              shadows: [
-                Shadow(
-                  color: player.color.withAlpha(130),
-                  blurRadius: 8,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '${player.score}',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: .w600,
-              color: Colors.white.withAlpha(230),
-            ),
-          ),
-        ],
       ),
     );
   }

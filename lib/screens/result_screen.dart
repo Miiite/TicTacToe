@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:tictactoe/bloc/game_cubit.dart';
-import 'package:tictactoe/models/player.dart';
+import 'package:tictactoe/extensions/build_context_extensions.dart';
 import 'package:tictactoe/utils/game_colors.dart';
+import 'package:tictactoe/widgets/animated_score_summary.dart';
+import 'package:tictactoe/widgets/main_button.dart';
 
 const _animationDuration = Duration(milliseconds: 800);
 
@@ -30,7 +32,10 @@ class ResultScreen extends StatelessWidget {
                     children: [
                       _GameResultMessage(),
                       const SizedBox(height: 60),
-                      _AnimatedScoreSummary(),
+                      AnimatedScoreSummary(
+                        duration: _animationDuration,
+                        backgroundColor: Colors.white.withAlpha(13),
+                      ),
                       const SizedBox(height: 60),
                       _ActionButtons(),
                     ],
@@ -240,89 +245,6 @@ class _GameResultMessage extends HookWidget {
   }
 }
 
-class _AnimatedScoreSummary extends HookWidget {
-  const _AnimatedScoreSummary();
-
-  @override
-  Widget build(BuildContext context) {
-    final controller = useAnimationController(
-      duration: _animationDuration,
-    );
-
-    useEffect(
-      () {
-        controller.forward();
-        return null;
-      },
-      [],
-    );
-
-    return FadeTransition(
-      opacity: context.fadeAnimation(controller: controller),
-      child: Container(
-        padding: const .all(24),
-        margin: const .symmetric(horizontal: 48),
-        decoration: BoxDecoration(
-          color: Colors.white.withAlpha(13),
-          borderRadius: BorderRadius.circular(20),
-          border: .all(
-            color: Colors.white.withAlpha(25),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: .spaceEvenly,
-          children: [
-            _XPlayerScore(),
-            SizedBox(
-              width: 1,
-              height: 50,
-              child: VerticalDivider(
-                color: Colors.white.withAlpha(50),
-                thickness: 1,
-              ),
-            ),
-            _OPlayerScore(),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _XPlayerScore extends StatelessWidget {
-  const _XPlayerScore();
-
-  @override
-  Widget build(BuildContext context) {
-    final score = context.select((GameCubit cubit) {
-      return cubit.state.xPlayer.score;
-    });
-
-    return _ScoreSummary(
-      symbol: PlayerType.x.symbol,
-      score: score,
-      color: const Color(0xFFE63946),
-    );
-  }
-}
-
-class _OPlayerScore extends StatelessWidget {
-  const _OPlayerScore();
-
-  @override
-  Widget build(BuildContext context) {
-    final score = context.select((GameCubit cubit) {
-      return cubit.state.oPlayer.score;
-    });
-
-    return _ScoreSummary(
-      symbol: PlayerType.o.symbol,
-      score: score,
-      color: const Color(0xFF4ECDC4),
-    );
-  }
-}
-
 class _ActionButtons extends HookWidget {
   const _ActionButtons();
 
@@ -344,61 +266,12 @@ class _ActionButtons extends HookWidget {
       opacity: context.fadeAnimation(controller: controller),
       child: Column(
         children: [
-          GestureDetector(
+          MainButton(
             onTap: () {
               context.read<GameCubit>().newGameRound();
             },
-            child: Container(
-              padding: const .symmetric(
-                horizontal: 48,
-                vertical: 16,
-              ),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFFE63946),
-                    Color(0xFFFF6B6B),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(50),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(
-                      0xFFE63946,
-                    ).withAlpha(100),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.replay_rounded,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'PLAY AGAIN',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: .w600,
-                      color: Colors.white,
-                      letterSpacing: 2,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black.withAlpha(50),
-                          offset: const Offset(0, 2),
-                          blurRadius: 4,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            icon: Icons.replay_rounded,
+            title: 'PLAY AGAIN',
           ),
           const SizedBox(height: 16),
           TextButton.icon(
@@ -418,65 +291,6 @@ class _ActionButtons extends HookWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _ScoreSummary extends StatelessWidget {
-  const _ScoreSummary({
-    required this.symbol,
-    required this.score,
-    required this.color,
-  });
-
-  final String symbol;
-  final int score;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          symbol,
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: .bold,
-            color: color,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          '$score',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: .w600,
-            color: Colors.white.withAlpha(230),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-extension on BuildContext {
-  Animation<double> fadeAnimation({
-    required AnimationController controller,
-  }) {
-    return CurvedAnimation(
-      parent: controller,
-      curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
-    );
-  }
-
-  Animation<double> scaleAnimation({
-    required AnimationController controller,
-  }) {
-    return Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(
-        parent: controller,
-        curve: Curves.elasticOut,
       ),
     );
   }
