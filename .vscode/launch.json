@@ -7,19 +7,9 @@
     {
       "name": "TicTacToe",
       "request": "launch",
-      "type": "dart"
-    },
-    {
-      "name": "TicTacToe (profile mode)",
-      "request": "launch",
       "type": "dart",
-      "flutterMode": "profile"
-    },
-    {
-      "name": "TicTacToe (release mode)",
-      "request": "launch",
-      "type": "dart",
-      "flutterMode": "release"
+      "flutterMode": "debug",
+      "internalConsoleOptions": "openOnSessionStart"
     }
   ]
 }

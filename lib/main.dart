@@ -36,7 +36,10 @@ class TicTacToeApp extends StatelessWidget {
         routerConfig: AppRouter.router,
         builder: (context, child) {
           return child != null
-              ? GameCubitNavigationListener(child: child)
+              ? GameCubitNavigationListener(
+                  router: AppRouter.router,
+                  child: child,
+                )
               : const SizedBox.shrink();
         },
       ),

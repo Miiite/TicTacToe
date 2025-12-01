@@ -7,18 +7,20 @@ class GameCubitNavigationListener extends StatelessWidget {
   const GameCubitNavigationListener({
     super.key,
     required this.child,
+    required this.router,
   });
 
   final Widget child;
+  final GoRouter router;
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<GameCubit, GameState>(
       listener: (context, state) {
         state.map(
-          initial: (_) => context.go('/'),
-          game: (game) => context.go('/game'),
-          result: (result) => context.go('/result'),
+          initial: (_) => router.go('/'),
+          game: (game) => router.go('/game'),
+          result: (result) => router.go('/result'),
         );
       },
       child: child,
