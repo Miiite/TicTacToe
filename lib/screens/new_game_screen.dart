@@ -1,0 +1,175 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+import '../bloc/game_cubit.dart';
+
+class NewGameScreen extends StatelessWidget {
+  const NewGameScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF0D1B2A),
+              Color(0xFF1B263B),
+              Color(0xFF415A77),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Title with X O styling
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'TIC',
+                      style: TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.w300,
+                        color: Colors.white.withAlpha(230),
+                        letterSpacing: 8,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE63946),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        'X',
+                        style: TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4ECDC4),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        'O',
+                        style: TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'TAC TOE',
+                  style: TextStyle(
+                    fontSize: 48,
+                    fontWeight: FontWeight.w300,
+                    color: Colors.white.withAlpha(230),
+                    letterSpacing: 16,
+                  ),
+                ),
+                const SizedBox(height: 80),
+                // Play button
+                GestureDetector(
+                  onTap: () {
+                    context.read<GameCubit>().newGame();
+                    context.go('/game');
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 64,
+                      vertical: 20,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFE63946), Color(0xFFFF6B6B)],
+                      ),
+                      borderRadius: BorderRadius.circular(50),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFE63946).withAlpha(100),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.play_arrow_rounded,
+                          color: Colors.white,
+                          size: 32,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'NEW GAME',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            letterSpacing: 2,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withAlpha(50),
+                                offset: const Offset(0, 2),
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 100),
+                // Decorative grid preview
+                Opacity(
+                  opacity: 0.15,
+                  child: SizedBox(
+                    width: 120,
+                    height: 120,
+                    child: GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 4,
+                        mainAxisSpacing: 4,
+                      ),
+                      itemCount: 9,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

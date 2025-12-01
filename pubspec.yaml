@@ -1,0 +1,33 @@
+name: tictactoe
+description: "A Tic Tac Toe game with Flutter"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  
+  # State management
+  flutter_bloc: ^9.1.0
+  
+  # Model classes
+  freezed_annotation: ^2.4.4
+  
+  # Navigation
+  go_router: ^15.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  
+  # Code generation
+  build_runner: ^2.4.14
+  freezed: ^2.5.8
+
+flutter:
+  uses-material-design: true
