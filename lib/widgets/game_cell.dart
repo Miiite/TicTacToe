@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:tictactoe/extensions/player_type_extensions.dart';
 import 'package:tictactoe/models/player.dart';
 import 'package:tictactoe/utils/game_colors.dart';
 
@@ -32,8 +33,6 @@ class GameCell extends HookWidget {
       ),
     );
 
-    final isX = value == PlayerType.x;
-
     useEffect(() {
       animationController.forward();
       return null;
@@ -41,8 +40,7 @@ class GameCell extends HookWidget {
 
     return _Pressable(
       onTap: onTap,
-
-      child: Container(
+      child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: GameColors.cellGradient,
           borderRadius: BorderRadius.circular(16),
@@ -63,20 +61,14 @@ class GameCell extends HookWidget {
               ? ScaleTransition(
                   scale: AlwaysStoppedAnimation(scaleAnimation),
                   child: Text(
-                    isX ? 'X' : 'O',
+                    value?.symbol.toUpperCase() ?? '',
                     style: TextStyle(
                       fontSize: 48,
                       fontWeight: .bold,
-                      color: isX
-                          ? const Color(0xFFE63946)
-                          : const Color(0xFF4ECDC4),
+                      color: value?.color,
                       shadows: [
                         Shadow(
-                          color:
-                              (isX
-                                      ? const Color(0xFFE63946)
-                                      : const Color(0xFF4ECDC4))
-                                  .withAlpha(130),
+                          color: value?.color.withAlpha(130) ?? Colors.black,
                           blurRadius: 12,
                         ),
                       ],

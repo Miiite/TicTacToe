@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tictactoe/utils/game_colors.dart';
+import 'package:tictactoe/extensions/player_type_extensions.dart';
 
 part 'player.freezed.dart';
 
@@ -26,5 +26,5 @@ sealed class Player with _$Player {
 
   String get symbol => type.symbol;
 
-  Color get color => type == PlayerType.x ? GameColors.red : GameColors.green;
+  Color get color => type.color;
 }
