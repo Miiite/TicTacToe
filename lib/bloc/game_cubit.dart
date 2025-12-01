@@ -84,6 +84,15 @@ class GameCubit extends Cubit<GameState> {
       ),
     );
   }
+
+  void newGame() {
+    emit(
+      GameState.initial(
+        xPlayer: state.xPlayer,
+        oPlayer: state.oPlayer,
+      ),
+    );
+  }
 }
 
 @freezed

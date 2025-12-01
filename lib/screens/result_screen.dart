@@ -403,7 +403,7 @@ class _ActionButtons extends HookWidget {
           const SizedBox(height: 16),
           TextButton.icon(
             onPressed: () {
-              context.read<GameCubit>().resetGame();
+              context.read<GameCubit>().newGame();
             },
             icon: const Icon(
               Icons.home_rounded,
