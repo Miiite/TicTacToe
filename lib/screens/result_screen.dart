@@ -1,54 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
 import 'package:tictactoe/bloc/game_cubit.dart';
 import 'package:tictactoe/models/player.dart';
 import 'package:tictactoe/utils/game_colors.dart';
 
-class ResultScreen extends StatefulWidget {
+class ResultScreen extends StatelessWidget {
   const ResultScreen({super.key});
-
-  @override
-  State<ResultScreen> createState() => _ResultScreenState();
-}
-
-class _ResultScreenState extends State<ResultScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _fadeAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.elasticOut,
-      ),
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
-      ),
-    );
-
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,25 +14,6 @@ class _ResultScreenState extends State<ResultScreen>
       buildWhen: (previous, current) =>
           current.maybeMap(result: (value) => true, orElse: () => false),
       builder: (context, state) {
-        final isXWinner = state.maybeMap(
-          result: (value) => value.isXWinner,
-          orElse: () => false,
-        );
-        final isOWinner = state.maybeMap(
-          result: (value) => value.isOWinner,
-          orElse: () => false,
-        );
-        final isDraw = state.maybeMap(
-          result: (value) => value.isDraw,
-          orElse: () => false,
-        );
-
-        final winnerColor = isXWinner
-            ? const Color(0xFFE63946)
-            : isOWinner
-            ? const Color(0xFF4ECDC4)
-            : Colors.white70;
-
         return Scaffold(
           body: Container(
             decoration: BoxDecoration(
@@ -85,135 +24,9 @@ class _ResultScreenState extends State<ResultScreen>
                 child: Column(
                   mainAxisAlignment: .center,
                   children: [
-                    // Animated result display
-                    FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: ScaleTransition(
-                        scale: _scaleAnimation,
-                        child: Column(
-                          children: [
-                            // Trophy or draw icon
-                            Container(
-                              width: 120,
-                              height: 120,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: RadialGradient(
-                                  colors: [
-                                    winnerColor.withAlpha(50),
-                                    winnerColor.withAlpha(13),
-                                  ],
-                                ),
-                                border: .all(
-                                  color: winnerColor.withAlpha(100),
-                                  width: 2,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: winnerColor.withAlpha(75),
-                                    blurRadius: 30,
-                                    spreadRadius: 5,
-                                  ),
-                                ],
-                              ),
-                              child: Icon(
-                                isDraw
-                                    ? Icons.handshake_rounded
-                                    : Icons.emoji_events_rounded,
-                                size: 60,
-                                color: winnerColor,
-                              ),
-                            ),
-                            const SizedBox(height: 32),
-                            // Winner text
-                            Text(
-                              isDraw ? "IT'S A DRAW!" : 'WINNER!',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: .w500,
-                                color: Colors.white.withAlpha(180),
-                                letterSpacing: 4,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            // Winner symbol
-                            if (!isDraw)
-                              Container(
-                                padding: const .symmetric(
-                                  horizontal: 40,
-                                  vertical: 20,
-                                ),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      winnerColor.withAlpha(75),
-                                      winnerColor.withAlpha(50),
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: .all(
-                                    color: winnerColor.withAlpha(130),
-                                    width: 2,
-                                  ),
-                                ),
-                                child: Text(
-                                  isXWinner ? 'X' : 'O',
-                                  style: TextStyle(
-                                    fontSize: 64,
-                                    fontWeight: .bold,
-                                    color: winnerColor,
-                                    shadows: [
-                                      Shadow(
-                                        color: winnerColor.withAlpha(180),
-                                        blurRadius: 20,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    _GameResultMessage(),
                     const SizedBox(height: 60),
-                    // Score summary
-                    FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: Container(
-                        padding: const .all(24),
-                        margin: const .symmetric(horizontal: 48),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(13),
-                          borderRadius: BorderRadius.circular(20),
-                          border: .all(
-                            color: Colors.white.withAlpha(25),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: .spaceEvenly,
-                          children: [
-                            _ScoreSummary(
-                              symbol: PlayerType.x.symbol,
-                              score: 99,
-                              color: const Color(0xFFE63946),
-                            ),
-                            SizedBox(
-                              width: 1,
-                              height: 50,
-                              child: VerticalDivider(
-                                color: Colors.white.withAlpha(50),
-                                thickness: 1,
-                              ),
-                            ),
-                            _ScoreSummary(
-                              symbol: PlayerType.o.symbol,
-                              score: 99,
-                              color: const Color(0xFF4ECDC4),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    _AnimatedScoreSummary(),
                     const SizedBox(height: 60),
                     // Action buttons
                     _ActionButtons(),
@@ -224,6 +37,221 @@ class _ResultScreenState extends State<ResultScreen>
           ),
         );
       },
+    );
+  }
+}
+
+class _GameResultMessage extends HookWidget {
+  const _GameResultMessage();
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.read<GameCubit>().state;
+    final isXWinner = state.maybeMap(
+      result: (value) => value.isXWinner,
+      orElse: () => false,
+    );
+    final isOWinner = state.maybeMap(
+      result: (value) => value.isOWinner,
+      orElse: () => false,
+    );
+    final isDraw = state.maybeMap(
+      result: (value) => value.isDraw,
+      orElse: () => false,
+    );
+
+    final winnerColor = isXWinner
+        ? const Color(0xFFE63946)
+        : isOWinner
+        ? const Color(0xFF4ECDC4)
+        : Colors.white70;
+
+    final controller = useAnimationController(
+      duration: const Duration(milliseconds: 800),
+    );
+
+    useEffect(
+      () {
+        controller.forward();
+        return null;
+      },
+      [],
+    );
+    return FadeTransition(
+      opacity: context.fadeAnimation(controller: controller),
+      child: ScaleTransition(
+        scale: context.scaleAnimation(controller: controller),
+        child: Column(
+          children: [
+            // Trophy or draw icon
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    winnerColor.withAlpha(50),
+                    winnerColor.withAlpha(13),
+                  ],
+                ),
+                border: .all(
+                  color: winnerColor.withAlpha(100),
+                  width: 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: winnerColor.withAlpha(75),
+                    blurRadius: 30,
+                    spreadRadius: 5,
+                  ),
+                ],
+              ),
+              child: Icon(
+                isDraw ? Icons.handshake_rounded : Icons.emoji_events_rounded,
+                size: 60,
+                color: winnerColor,
+              ),
+            ),
+            const SizedBox(height: 32),
+            // Winner text
+            Text(
+              isDraw ? "IT'S A DRAW!" : 'WINNER!',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: .w500,
+                color: Colors.white.withAlpha(180),
+                letterSpacing: 4,
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Winner symbol
+            if (!isDraw)
+              Container(
+                padding: const .symmetric(
+                  horizontal: 40,
+                  vertical: 20,
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      winnerColor.withAlpha(75),
+                      winnerColor.withAlpha(50),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  border: .all(
+                    color: winnerColor.withAlpha(130),
+                    width: 2,
+                  ),
+                ),
+                child: Text(
+                  isXWinner ? 'X' : 'O',
+                  style: TextStyle(
+                    fontSize: 64,
+                    fontWeight: .bold,
+                    color: winnerColor,
+                    shadows: [
+                      Shadow(
+                        color: winnerColor.withAlpha(180),
+                        blurRadius: 20,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AnimatedScoreSummary extends HookWidget {
+  const _AnimatedScoreSummary();
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = useAnimationController(
+      duration: const Duration(milliseconds: 800),
+    );
+
+    useEffect(
+      () {
+        controller.forward();
+        return null;
+      },
+      [],
+    );
+
+    return FadeTransition(
+      opacity: context.fadeAnimation(controller: controller),
+      child: Container(
+        padding: const .all(24),
+        margin: const .symmetric(horizontal: 48),
+        decoration: BoxDecoration(
+          color: Colors.white.withAlpha(13),
+          borderRadius: BorderRadius.circular(20),
+          border: .all(
+            color: Colors.white.withAlpha(25),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: .spaceEvenly,
+          children: [
+            _XPlayerScore(),
+            SizedBox(
+              width: 1,
+              height: 50,
+              child: VerticalDivider(
+                color: Colors.white.withAlpha(50),
+                thickness: 1,
+              ),
+            ),
+            _OPlayerScore(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _XPlayerScore extends StatelessWidget {
+  const _XPlayerScore();
+
+  @override
+  Widget build(BuildContext context) {
+    final score = context.select((GameCubit cubit) {
+      return cubit.state.maybeMap(
+        result: (value) => value.xScore,
+        orElse: () => 0,
+      );
+    });
+
+    return _ScoreSummary(
+      symbol: PlayerType.x.symbol,
+      score: score,
+      color: const Color(0xFFE63946),
+    );
+  }
+}
+
+class _OPlayerScore extends StatelessWidget {
+  const _OPlayerScore();
+
+  @override
+  Widget build(BuildContext context) {
+    final score = context.select((GameCubit cubit) {
+      return cubit.state.maybeMap(
+        result: (value) => value.oScore,
+        orElse: () => 0,
+      );
+    });
+
+    return _ScoreSummary(
+      symbol: PlayerType.o.symbol,
+      score: score,
+      color: const Color(0xFF4ECDC4),
     );
   }
 }
@@ -240,16 +268,13 @@ class _ActionButtons extends HookWidget {
     useEffect(
       () {
         controller.forward();
-        return controller.dispose;
+        return null;
       },
       [],
     );
 
     return FadeTransition(
-      opacity: CurvedAnimation(
-        parent: controller,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
-      ),
+      opacity: context.fadeAnimation(controller: controller),
       child: Column(
         children: [
           // Play Again button
@@ -314,7 +339,6 @@ class _ActionButtons extends HookWidget {
           TextButton.icon(
             onPressed: () {
               context.read<GameCubit>().newGame();
-              context.go('/');
             },
             icon: const Icon(
               Icons.home_rounded,
@@ -367,6 +391,28 @@ class _ScoreSummary extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+extension on BuildContext {
+  Animation<double> fadeAnimation({
+    required AnimationController controller,
+  }) {
+    return CurvedAnimation(
+      parent: controller,
+      curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
+    );
+  }
+
+  Animation<double> scaleAnimation({
+    required AnimationController controller,
+  }) {
+    return Tween<double>(begin: 0.5, end: 1.0).animate(
+      CurvedAnimation(
+        parent: controller,
+        curve: Curves.elasticOut,
+      ),
     );
   }
 }
