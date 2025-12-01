@@ -1,5 +1,9 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:tictactoe/bloc/game_cubit.dart';
 import 'package:tictactoe/utils/game_colors.dart';
 
@@ -161,33 +165,57 @@ class _PlayButton extends StatelessWidget {
   }
 }
 
-class _Illustration extends StatelessWidget {
+class _Illustration extends HookWidget {
   const _Illustration();
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: 0.15,
-      child: SizedBox(
-        width: 120,
-        height: 120,
-        child: GridView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            crossAxisSpacing: 4,
-            mainAxisSpacing: 4,
-          ),
-          itemCount: 9,
-          itemBuilder: (context, index) {
-            return Container(
+    final randomizer = useMemoized(() => Random());
+    final selectedTile = useState(randomizer.nextInt(9));
+
+    useEffect(() {
+      final timer = Timer.periodic(
+        const Duration(seconds: 1),
+        (_) {
+          int newSelectedTile = randomizer.nextInt(9);
+          while (selectedTile.value == newSelectedTile) {
+            newSelectedTile = randomizer.nextInt(9);
+          }
+          selectedTile.value = newSelectedTile;
+        },
+      );
+      return timer.cancel;
+    }, const []);
+
+    return SizedBox(
+      width: 120,
+      height: 120,
+      child: GridView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 4,
+          mainAxisSpacing: 4,
+        ),
+        itemCount: 9,
+        itemBuilder: (context, index) {
+          final isSelected = index == selectedTile.value;
+
+          return AnimatedOpacity(
+            opacity: isSelected ? 1.0 : 0.15,
+            duration: Duration(milliseconds: isSelected ? 400 : 0),
+            child: DecoratedBox(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isSelected
+                    ? (selectedTile.value % 2 == 0
+                          ? GameColors.red
+                          : GameColors.green)
+                    : Colors.white,
                 borderRadius: BorderRadius.circular(4),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

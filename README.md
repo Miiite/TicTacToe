@@ -1,8 +1,10 @@
 # Environment
 
-Project uses Flutter 3.38.3
+/!\
+Project uses Flutter 3.38.3 and Dart 3.10.0
+/!\
 
-# Initial prompt
+# Initial prompt (used to generate the project skeleton prior to manual editions)
 
 "Create a tictactoe game following these rules:
 
@@ -11,13 +13,14 @@ Project uses Flutter 3.38.3
 - The project must use go_router for screen navigation
 
 The project must have 3 main screens
+
 - The "new game" screen, with a button to start a new game
 - The "game" screen, which will be a screen with the tic tac toe grid as the main element, and below it some context information like the current score, who's turn it is to play etc
 - The "result" screen, which will appear when a game is over, and someone has won the game.
 
-
 Additional functionnalities:
+
 - When a player selects one of the tictactoe's grid item, a light sound should be played when the button is pressed, and when the button is released. This sound should be "non-intrusive" meaning it should be very discreet.
 - Between each sreen navigation, the app should use a FadeTransition instead of the default navigation transition
-"
-"
+  "
+  "
