@@ -14,7 +14,7 @@ class GameScreen extends StatelessWidget {
     final currentColorGradient = context.select((GameCubit cubit) {
       return cubit.state.maybeMap(
         game: (value) {
-          return switch (value.playerTurn) {
+          return switch (value.playing.type) {
             PlayerType.x => GameColors.redGradient,
             PlayerType.o => GameColors.greenGradient,
           };

@@ -21,7 +21,7 @@ class ResultScreen extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           body: _ConfettiCanon(
-            child: Container(
+            child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: GameColors.backgroundGradient,
               ),
@@ -139,9 +139,9 @@ class _GameResultMessage extends HookWidget {
     );
 
     final winnerColor = isXWinner
-        ? const Color(0xFFE63946)
+        ? GameColors.red
         : isOWinner
-        ? const Color(0xFF4ECDC4)
+        ? GameColors.green
         : Colors.white70;
 
     final controller = useAnimationController(
@@ -161,85 +161,128 @@ class _GameResultMessage extends HookWidget {
         scale: context.scaleAnimation(controller: controller),
         child: Column(
           children: [
-            // Trophy or draw icon
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    winnerColor.withAlpha(50),
-                    winnerColor.withAlpha(13),
-                  ],
-                ),
-                border: .all(
-                  color: winnerColor.withAlpha(100),
-                  width: 2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: winnerColor.withAlpha(75),
-                    blurRadius: 30,
-                    spreadRadius: 5,
-                  ),
-                ],
-              ),
-              child: Icon(
-                isDraw ? Icons.handshake_rounded : Icons.emoji_events_rounded,
-                size: 60,
-                color: winnerColor,
-              ),
-            ),
+            _Icon(winnerColor: winnerColor, isDraw: isDraw),
             const SizedBox(height: 32),
-            // Winner text
-            Text(
-              isDraw ? "IT'S A DRAW!" : 'WINNER!',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: .w500,
-                color: Colors.white.withAlpha(180),
-                letterSpacing: 4,
-              ),
-            ),
+            _Text(isDraw: isDraw),
             const SizedBox(height: 16),
-            // Winner symbol
             if (!isDraw)
-              Container(
-                padding: const .symmetric(
-                  horizontal: 40,
-                  vertical: 20,
-                ),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      winnerColor.withAlpha(75),
-                      winnerColor.withAlpha(50),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  border: .all(
-                    color: winnerColor.withAlpha(130),
-                    width: 2,
-                  ),
-                ),
-                child: Text(
-                  isXWinner ? 'X' : 'O',
-                  style: TextStyle(
-                    fontSize: 64,
-                    fontWeight: .bold,
-                    color: winnerColor,
-                    shadows: [
-                      Shadow(
-                        color: winnerColor.withAlpha(180),
-                        blurRadius: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              _WinnerIcon(winnerColor: winnerColor, isXWinner: isXWinner),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _WinnerIcon extends StatelessWidget {
+  const _WinnerIcon({
+    required this.winnerColor,
+    required this.isXWinner,
+  });
+
+  final Color winnerColor;
+  final bool isXWinner;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            winnerColor.withAlpha(75),
+            winnerColor.withAlpha(50),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: .all(
+          color: winnerColor.withAlpha(130),
+          width: 2,
+        ),
+      ),
+      child: Padding(
+        padding: const .symmetric(
+          horizontal: 40,
+          vertical: 20,
+        ),
+        child: Text(
+          isXWinner ? 'X' : 'O',
+          style: TextStyle(
+            fontSize: 64,
+            fontWeight: .bold,
+            color: winnerColor,
+            shadows: [
+              Shadow(
+                color: winnerColor.withAlpha(180),
+                blurRadius: 20,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Text extends StatelessWidget {
+  const _Text({
+    super.key,
+    required this.isDraw,
+  });
+
+  final bool isDraw;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      isDraw ? "IT'S A DRAW!" : 'WINNER!',
+      style: TextStyle(
+        fontSize: 16,
+        fontWeight: .w500,
+        color: Colors.white.withAlpha(180),
+        letterSpacing: 4,
+      ),
+    );
+  }
+}
+
+class _Icon extends StatelessWidget {
+  const _Icon({
+    required this.winnerColor,
+    required this.isDraw,
+  });
+
+  final Color winnerColor;
+  final bool isDraw;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 120,
+      height: 120,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(
+          colors: [
+            winnerColor.withAlpha(50),
+            winnerColor.withAlpha(13),
+          ],
+        ),
+        border: .all(
+          color: winnerColor.withAlpha(100),
+          width: 2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: winnerColor.withAlpha(75),
+            blurRadius: 30,
+            spreadRadius: 5,
+          ),
+        ],
+      ),
+      child: Icon(
+        isDraw ? Icons.handshake_rounded : Icons.emoji_events_rounded,
+        size: 60,
+        color: winnerColor,
       ),
     );
   }

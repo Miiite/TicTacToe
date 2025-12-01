@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tictactoe/extensions/player_type_extensions.dart';
 import 'package:tictactoe/models/player.dart';
 
 part 'game_cubit.freezed.dart';
@@ -45,17 +44,21 @@ class GameCubit extends Cubit<GameState> {
             ),
           );
         } else {
-          final winner = newState.getWinner();
+          final winnerType = newState.getWinnerType();
 
           emit(
             GameState.result(
               oPlayer: state.oPlayer.copyWith(
-                score: state.oPlayer.score + (winner == PlayerType.o ? 1 : 0),
+                score:
+                    state.oPlayer.score + (winnerType == PlayerType.o ? 1 : 0),
               ),
               xPlayer: state.xPlayer.copyWith(
-                score: state.xPlayer.score + (winner == PlayerType.x ? 1 : 0),
+                score:
+                    state.xPlayer.score + (winnerType == PlayerType.x ? 1 : 0),
               ),
-              winner: winner,
+              winner: winnerType == state.xPlayer.type
+                  ? state.xPlayer
+                  : state.oPlayer,
             ),
           );
         }
@@ -66,7 +69,7 @@ class GameCubit extends Cubit<GameState> {
   void resetGame() {
     emit(
       GameState.game(
-        playerTurn: random.nextBool() ? PlayerType.x : PlayerType.o,
+        playing: random.nextBool() ? state.xPlayer : state.oPlayer,
         board: List.filled(gridSize, null),
         oPlayer: state.oPlayer,
         xPlayer: state.xPlayer,
@@ -77,7 +80,7 @@ class GameCubit extends Cubit<GameState> {
   void newGameRound() {
     emit(
       GameState.game(
-        playerTurn: random.nextBool() ? PlayerType.x : PlayerType.o,
+        playing: random.nextBool() ? state.xPlayer : state.oPlayer,
         board: List.filled(gridSize, null),
         oPlayer: state.oPlayer,
         xPlayer: state.xPlayer,
@@ -102,34 +105,34 @@ sealed class GameState with _$GameState {
     required Player oPlayer,
   }) = _Initial;
   factory GameState.game({
-    required PlayerType playerTurn,
+    required Player playing,
     required List<PlayerType?> board,
     required Player xPlayer,
     required Player oPlayer,
   }) = _Game;
   factory GameState.result({
-    PlayerType? winner,
+    Player? winner,
     required Player xPlayer,
     required Player oPlayer,
   }) = Result;
 }
 
 extension ResultExtensions on Result {
-  bool get isXWinner => winner == PlayerType.x;
-  bool get isOWinner => winner == PlayerType.o;
+  bool get isXWinner => winner?.type == PlayerType.x;
+  bool get isOWinner => winner?.type == PlayerType.o;
   bool get isDraw => winner == null;
 }
 
 extension on _Game {
   bool get isGameOver {
-    return getWinner() != null || isDraw;
+    return getWinnerType() != null || isDraw;
   }
 
   bool get isDraw {
     return board.every((cell) => cell != null);
   }
 
-  PlayerType? getWinner() {
+  PlayerType? getWinnerType() {
     for (final pattern in GameCubit.winPatterns) {
       final values = pattern.map((index) => board[index]).toList();
       if (values.every((cell) => cell == PlayerType.x)) {
@@ -143,10 +146,10 @@ extension on _Game {
   }
 
   _Game selectCell(int index) => copyWith(
-    board: List.from(board)..[index] = playerTurn,
+    board: List.from(board)..[index] = playing.type,
   );
 
   _Game nextTurn() => copyWith(
-    playerTurn: playerTurn.nextTurn(),
+    playing: playing == xPlayer ? oPlayer : xPlayer,
   );
 }

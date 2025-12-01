@@ -172,11 +172,11 @@ return result(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( Player xPlayer,  Player oPlayer)?  initial,TResult Function( PlayerType playerTurn,  List<PlayerType?> board,  Player xPlayer,  Player oPlayer)?  game,TResult Function( PlayerType? winner,  Player xPlayer,  Player oPlayer)?  result,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( Player xPlayer,  Player oPlayer)?  initial,TResult Function( Player playing,  List<PlayerType?> board,  Player xPlayer,  Player oPlayer)?  game,TResult Function( Player? winner,  Player xPlayer,  Player oPlayer)?  result,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that.xPlayer,_that.oPlayer);case _Game() when game != null:
-return game(_that.playerTurn,_that.board,_that.xPlayer,_that.oPlayer);case Result() when result != null:
+return game(_that.playing,_that.board,_that.xPlayer,_that.oPlayer);case Result() when result != null:
 return result(_that.winner,_that.xPlayer,_that.oPlayer);case _:
   return orElse();
 
@@ -195,11 +195,11 @@ return result(_that.winner,_that.xPlayer,_that.oPlayer);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( Player xPlayer,  Player oPlayer)  initial,required TResult Function( PlayerType playerTurn,  List<PlayerType?> board,  Player xPlayer,  Player oPlayer)  game,required TResult Function( PlayerType? winner,  Player xPlayer,  Player oPlayer)  result,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( Player xPlayer,  Player oPlayer)  initial,required TResult Function( Player playing,  List<PlayerType?> board,  Player xPlayer,  Player oPlayer)  game,required TResult Function( Player? winner,  Player xPlayer,  Player oPlayer)  result,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial(_that.xPlayer,_that.oPlayer);case _Game():
-return game(_that.playerTurn,_that.board,_that.xPlayer,_that.oPlayer);case Result():
+return game(_that.playing,_that.board,_that.xPlayer,_that.oPlayer);case Result():
 return result(_that.winner,_that.xPlayer,_that.oPlayer);}
 }
 /// A variant of `when` that fallback to returning `null`
@@ -214,11 +214,11 @@ return result(_that.winner,_that.xPlayer,_that.oPlayer);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( Player xPlayer,  Player oPlayer)?  initial,TResult? Function( PlayerType playerTurn,  List<PlayerType?> board,  Player xPlayer,  Player oPlayer)?  game,TResult? Function( PlayerType? winner,  Player xPlayer,  Player oPlayer)?  result,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( Player xPlayer,  Player oPlayer)?  initial,TResult? Function( Player playing,  List<PlayerType?> board,  Player xPlayer,  Player oPlayer)?  game,TResult? Function( Player? winner,  Player xPlayer,  Player oPlayer)?  result,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that.xPlayer,_that.oPlayer);case _Game() when game != null:
-return game(_that.playerTurn,_that.board,_that.xPlayer,_that.oPlayer);case Result() when result != null:
+return game(_that.playing,_that.board,_that.xPlayer,_that.oPlayer);case Result() when result != null:
 return result(_that.winner,_that.xPlayer,_that.oPlayer);case _:
   return null;
 
@@ -317,10 +317,10 @@ $PlayerCopyWith<$Res> get oPlayer {
 
 
 class _Game implements GameState {
-   _Game({required this.playerTurn, required final  List<PlayerType?> board, required this.xPlayer, required this.oPlayer}): _board = board;
+   _Game({required this.playing, required final  List<PlayerType?> board, required this.xPlayer, required this.oPlayer}): _board = board;
   
 
- final  PlayerType playerTurn;
+ final  Player playing;
  final  List<PlayerType?> _board;
  List<PlayerType?> get board {
   if (_board is EqualUnmodifiableListView) return _board;
@@ -341,16 +341,16 @@ _$GameCopyWith<_Game> get copyWith => __$GameCopyWithImpl<_Game>(this, _$identit
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Game&&(identical(other.playerTurn, playerTurn) || other.playerTurn == playerTurn)&&const DeepCollectionEquality().equals(other._board, _board)&&(identical(other.xPlayer, xPlayer) || other.xPlayer == xPlayer)&&(identical(other.oPlayer, oPlayer) || other.oPlayer == oPlayer));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Game&&(identical(other.playing, playing) || other.playing == playing)&&const DeepCollectionEquality().equals(other._board, _board)&&(identical(other.xPlayer, xPlayer) || other.xPlayer == xPlayer)&&(identical(other.oPlayer, oPlayer) || other.oPlayer == oPlayer));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,playerTurn,const DeepCollectionEquality().hash(_board),xPlayer,oPlayer);
+int get hashCode => Object.hash(runtimeType,playing,const DeepCollectionEquality().hash(_board),xPlayer,oPlayer);
 
 @override
 String toString() {
-  return 'GameState.game(playerTurn: $playerTurn, board: $board, xPlayer: $xPlayer, oPlayer: $oPlayer)';
+  return 'GameState.game(playing: $playing, board: $board, xPlayer: $xPlayer, oPlayer: $oPlayer)';
 }
 
 
@@ -361,11 +361,11 @@ abstract mixin class _$GameCopyWith<$Res> implements $GameStateCopyWith<$Res> {
   factory _$GameCopyWith(_Game value, $Res Function(_Game) _then) = __$GameCopyWithImpl;
 @override @useResult
 $Res call({
- PlayerType playerTurn, List<PlayerType?> board, Player xPlayer, Player oPlayer
+ Player playing, List<PlayerType?> board, Player xPlayer, Player oPlayer
 });
 
 
-@override $PlayerCopyWith<$Res> get xPlayer;@override $PlayerCopyWith<$Res> get oPlayer;
+$PlayerCopyWith<$Res> get playing;@override $PlayerCopyWith<$Res> get xPlayer;@override $PlayerCopyWith<$Res> get oPlayer;
 
 }
 /// @nodoc
@@ -378,10 +378,10 @@ class __$GameCopyWithImpl<$Res>
 
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? playerTurn = null,Object? board = null,Object? xPlayer = null,Object? oPlayer = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? playing = null,Object? board = null,Object? xPlayer = null,Object? oPlayer = null,}) {
   return _then(_Game(
-playerTurn: null == playerTurn ? _self.playerTurn : playerTurn // ignore: cast_nullable_to_non_nullable
-as PlayerType,board: null == board ? _self._board : board // ignore: cast_nullable_to_non_nullable
+playing: null == playing ? _self.playing : playing // ignore: cast_nullable_to_non_nullable
+as Player,board: null == board ? _self._board : board // ignore: cast_nullable_to_non_nullable
 as List<PlayerType?>,xPlayer: null == xPlayer ? _self.xPlayer : xPlayer // ignore: cast_nullable_to_non_nullable
 as Player,oPlayer: null == oPlayer ? _self.oPlayer : oPlayer // ignore: cast_nullable_to_non_nullable
 as Player,
@@ -389,6 +389,15 @@ as Player,
 }
 
 /// Create a copy of GameState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PlayerCopyWith<$Res> get playing {
+  
+  return $PlayerCopyWith<$Res>(_self.playing, (value) {
+    return _then(_self.copyWith(playing: value));
+  });
+}/// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
@@ -416,7 +425,7 @@ class Result implements GameState {
    Result({this.winner, required this.xPlayer, required this.oPlayer});
   
 
- final  PlayerType? winner;
+ final  Player? winner;
 @override final  Player xPlayer;
 @override final  Player oPlayer;
 
@@ -450,11 +459,11 @@ abstract mixin class $ResultCopyWith<$Res> implements $GameStateCopyWith<$Res> {
   factory $ResultCopyWith(Result value, $Res Function(Result) _then) = _$ResultCopyWithImpl;
 @override @useResult
 $Res call({
- PlayerType? winner, Player xPlayer, Player oPlayer
+ Player? winner, Player xPlayer, Player oPlayer
 });
 
 
-@override $PlayerCopyWith<$Res> get xPlayer;@override $PlayerCopyWith<$Res> get oPlayer;
+$PlayerCopyWith<$Res>? get winner;@override $PlayerCopyWith<$Res> get xPlayer;@override $PlayerCopyWith<$Res> get oPlayer;
 
 }
 /// @nodoc
@@ -470,13 +479,25 @@ class _$ResultCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? winner = freezed,Object? xPlayer = null,Object? oPlayer = null,}) {
   return _then(Result(
 winner: freezed == winner ? _self.winner : winner // ignore: cast_nullable_to_non_nullable
-as PlayerType?,xPlayer: null == xPlayer ? _self.xPlayer : xPlayer // ignore: cast_nullable_to_non_nullable
+as Player?,xPlayer: null == xPlayer ? _self.xPlayer : xPlayer // ignore: cast_nullable_to_non_nullable
 as Player,oPlayer: null == oPlayer ? _self.oPlayer : oPlayer // ignore: cast_nullable_to_non_nullable
 as Player,
   ));
 }
 
 /// Create a copy of GameState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PlayerCopyWith<$Res>? get winner {
+    if (_self.winner == null) {
+    return null;
+  }
+
+  return $PlayerCopyWith<$Res>(_self.winner!, (value) {
+    return _then(_self.copyWith(winner: value));
+  });
+}/// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
