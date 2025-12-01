@@ -89,8 +89,8 @@ class _GameCellState extends State<GameCell> with SingleTickerProviderStateMixin
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: .topLeft,
+              end: .bottomRight,
               colors: widget.isWinningCell
                   ? [
                       const Color(0xFF4ECDC4).withAlpha(80),
@@ -102,7 +102,7 @@ class _GameCellState extends State<GameCell> with SingleTickerProviderStateMixin
                     ],
             ),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
+            border: .all(
               color: widget.isWinningCell
                   ? const Color(0xFF4ECDC4)
                   : Colors.white.withAlpha(25),
@@ -130,7 +130,7 @@ class _GameCellState extends State<GameCell> with SingleTickerProviderStateMixin
                       isX ? 'X' : 'O',
                       style: TextStyle(
                         fontSize: 48,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: .bold,
                         color: isX
                             ? const Color(0xFFE63946)
                             : const Color(0xFF4ECDC4),

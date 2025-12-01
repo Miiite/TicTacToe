@@ -23,8 +23,8 @@ mixin _$GameState {
     required TResult Function(
       PlayerType playerTurn,
       List<PlayerType?> board,
-      int xScore,
-      int oScore,
+      Player xPlayer,
+      Player oPlayer,
     )
     game,
     required TResult Function(int xScore, int oScore) result,
@@ -35,8 +35,8 @@ mixin _$GameState {
     TResult? Function(
       PlayerType playerTurn,
       List<PlayerType?> board,
-      int xScore,
-      int oScore,
+      Player xPlayer,
+      Player oPlayer,
     )?
     game,
     TResult? Function(int xScore, int oScore)? result,
@@ -47,8 +47,8 @@ mixin _$GameState {
     TResult Function(
       PlayerType playerTurn,
       List<PlayerType?> board,
-      int xScore,
-      int oScore,
+      Player xPlayer,
+      Player oPlayer,
     )?
     game,
     TResult Function(int xScore, int oScore)? result,
@@ -142,8 +142,8 @@ class _$InitialImpl implements _Initial {
     required TResult Function(
       PlayerType playerTurn,
       List<PlayerType?> board,
-      int xScore,
-      int oScore,
+      Player xPlayer,
+      Player oPlayer,
     )
     game,
     required TResult Function(int xScore, int oScore) result,
@@ -158,8 +158,8 @@ class _$InitialImpl implements _Initial {
     TResult? Function(
       PlayerType playerTurn,
       List<PlayerType?> board,
-      int xScore,
-      int oScore,
+      Player xPlayer,
+      Player oPlayer,
     )?
     game,
     TResult? Function(int xScore, int oScore)? result,
@@ -174,8 +174,8 @@ class _$InitialImpl implements _Initial {
     TResult Function(
       PlayerType playerTurn,
       List<PlayerType?> board,
-      int xScore,
-      int oScore,
+      Player xPlayer,
+      Player oPlayer,
     )?
     game,
     TResult Function(int xScore, int oScore)? result,
@@ -236,9 +236,12 @@ abstract class _$$GameImplCopyWith<$Res> {
   $Res call({
     PlayerType playerTurn,
     List<PlayerType?> board,
-    int xScore,
-    int oScore,
+    Player xPlayer,
+    Player oPlayer,
   });
+
+  $PlayerCopyWith<$Res> get xPlayer;
+  $PlayerCopyWith<$Res> get oPlayer;
 }
 
 /// @nodoc
@@ -255,8 +258,8 @@ class __$$GameImplCopyWithImpl<$Res>
   $Res call({
     Object? playerTurn = null,
     Object? board = null,
-    Object? xScore = null,
-    Object? oScore = null,
+    Object? xPlayer = null,
+    Object? oPlayer = null,
   }) {
     return _then(
       _$GameImpl(
@@ -268,16 +271,36 @@ class __$$GameImplCopyWithImpl<$Res>
             ? _value._board
             : board // ignore: cast_nullable_to_non_nullable
                   as List<PlayerType?>,
-        xScore: null == xScore
-            ? _value.xScore
-            : xScore // ignore: cast_nullable_to_non_nullable
-                  as int,
-        oScore: null == oScore
-            ? _value.oScore
-            : oScore // ignore: cast_nullable_to_non_nullable
-                  as int,
+        xPlayer: null == xPlayer
+            ? _value.xPlayer
+            : xPlayer // ignore: cast_nullable_to_non_nullable
+                  as Player,
+        oPlayer: null == oPlayer
+            ? _value.oPlayer
+            : oPlayer // ignore: cast_nullable_to_non_nullable
+                  as Player,
       ),
     );
+  }
+
+  /// Create a copy of GameState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PlayerCopyWith<$Res> get xPlayer {
+    return $PlayerCopyWith<$Res>(_value.xPlayer, (value) {
+      return _then(_value.copyWith(xPlayer: value));
+    });
+  }
+
+  /// Create a copy of GameState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PlayerCopyWith<$Res> get oPlayer {
+    return $PlayerCopyWith<$Res>(_value.oPlayer, (value) {
+      return _then(_value.copyWith(oPlayer: value));
+    });
   }
 }
 
@@ -287,8 +310,8 @@ class _$GameImpl implements _Game {
   _$GameImpl({
     required this.playerTurn,
     required final List<PlayerType?> board,
-    this.xScore = 0,
-    this.oScore = 0,
+    required this.xPlayer,
+    required this.oPlayer,
   }) : _board = board;
 
   @override
@@ -302,15 +325,13 @@ class _$GameImpl implements _Game {
   }
 
   @override
-  @JsonKey()
-  final int xScore;
+  final Player xPlayer;
   @override
-  @JsonKey()
-  final int oScore;
+  final Player oPlayer;
 
   @override
   String toString() {
-    return 'GameState.game(playerTurn: $playerTurn, board: $board, xScore: $xScore, oScore: $oScore)';
+    return 'GameState.game(playerTurn: $playerTurn, board: $board, xPlayer: $xPlayer, oPlayer: $oPlayer)';
   }
 
   @override
@@ -321,8 +342,8 @@ class _$GameImpl implements _Game {
             (identical(other.playerTurn, playerTurn) ||
                 other.playerTurn == playerTurn) &&
             const DeepCollectionEquality().equals(other._board, _board) &&
-            (identical(other.xScore, xScore) || other.xScore == xScore) &&
-            (identical(other.oScore, oScore) || other.oScore == oScore));
+            (identical(other.xPlayer, xPlayer) || other.xPlayer == xPlayer) &&
+            (identical(other.oPlayer, oPlayer) || other.oPlayer == oPlayer));
   }
 
   @override
@@ -330,8 +351,8 @@ class _$GameImpl implements _Game {
     runtimeType,
     playerTurn,
     const DeepCollectionEquality().hash(_board),
-    xScore,
-    oScore,
+    xPlayer,
+    oPlayer,
   );
 
   /// Create a copy of GameState
@@ -349,13 +370,13 @@ class _$GameImpl implements _Game {
     required TResult Function(
       PlayerType playerTurn,
       List<PlayerType?> board,
-      int xScore,
-      int oScore,
+      Player xPlayer,
+      Player oPlayer,
     )
     game,
     required TResult Function(int xScore, int oScore) result,
   }) {
-    return game(playerTurn, board, xScore, oScore);
+    return game(playerTurn, board, xPlayer, oPlayer);
   }
 
   @override
@@ -365,13 +386,13 @@ class _$GameImpl implements _Game {
     TResult? Function(
       PlayerType playerTurn,
       List<PlayerType?> board,
-      int xScore,
-      int oScore,
+      Player xPlayer,
+      Player oPlayer,
     )?
     game,
     TResult? Function(int xScore, int oScore)? result,
   }) {
-    return game?.call(playerTurn, board, xScore, oScore);
+    return game?.call(playerTurn, board, xPlayer, oPlayer);
   }
 
   @override
@@ -381,15 +402,15 @@ class _$GameImpl implements _Game {
     TResult Function(
       PlayerType playerTurn,
       List<PlayerType?> board,
-      int xScore,
-      int oScore,
+      Player xPlayer,
+      Player oPlayer,
     )?
     game,
     TResult Function(int xScore, int oScore)? result,
     required TResult orElse(),
   }) {
     if (game != null) {
-      return game(playerTurn, board, xScore, oScore);
+      return game(playerTurn, board, xPlayer, oPlayer);
     }
     return orElse();
   }
@@ -433,14 +454,14 @@ abstract class _Game implements GameState {
   factory _Game({
     required final PlayerType playerTurn,
     required final List<PlayerType?> board,
-    final int xScore,
-    final int oScore,
+    required final Player xPlayer,
+    required final Player oPlayer,
   }) = _$GameImpl;
 
   PlayerType get playerTurn;
   List<PlayerType?> get board;
-  int get xScore;
-  int get oScore;
+  Player get xPlayer;
+  Player get oPlayer;
 
   /// Create a copy of GameState
   /// with the given fields replaced by the non-null parameter values.
@@ -532,8 +553,8 @@ class _$ResultImpl implements _Result {
     required TResult Function(
       PlayerType playerTurn,
       List<PlayerType?> board,
-      int xScore,
-      int oScore,
+      Player xPlayer,
+      Player oPlayer,
     )
     game,
     required TResult Function(int xScore, int oScore) result,
@@ -548,8 +569,8 @@ class _$ResultImpl implements _Result {
     TResult? Function(
       PlayerType playerTurn,
       List<PlayerType?> board,
-      int xScore,
-      int oScore,
+      Player xPlayer,
+      Player oPlayer,
     )?
     game,
     TResult? Function(int xScore, int oScore)? result,
@@ -564,8 +585,8 @@ class _$ResultImpl implements _Result {
     TResult Function(
       PlayerType playerTurn,
       List<PlayerType?> board,
-      int xScore,
-      int oScore,
+      Player xPlayer,
+      Player oPlayer,
     )?
     game,
     TResult Function(int xScore, int oScore)? result,

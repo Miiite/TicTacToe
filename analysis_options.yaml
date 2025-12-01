@@ -13,6 +13,8 @@ formatter:
   trailing_commas: preserve
 
 analyzer:
+  enable-experiment:
+    - dot-shorthands
   exclude:
     # ignore warnings in files from json_serializable, built_value and most generators.
     - "**/*.g.dart"

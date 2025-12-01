@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:tictactoe/bloc/game_cubit.dart';
+import 'package:tictactoe/models/player.dart';
+import 'package:tictactoe/utils/game_colors.dart';
 import 'package:tictactoe/widgets/game_cell.dart';
 
 class GameScreen extends StatelessWidget {
@@ -10,158 +11,28 @@ class GameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('TIC TAC TOE'),
+        backgroundColor: Colors.transparent,
+      ),
+      extendBodyBehindAppBar: true,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF0D1B2A),
-              Color(0xFF1B263B),
-              Color(0xFF415A77),
-            ],
-          ),
+        decoration: BoxDecoration(
+          gradient: GameColors.backgroundGradient,
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: const .all(24.0),
             child: Column(
               children: [
-                // Header with back button
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () => context.go('/'),
-                      icon: const Icon(
-                        Icons.arrow_back_ios_rounded,
-                        color: Colors.white70,
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      'TIC TAC TOE',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w300,
-                        color: Colors.white.withAlpha(180),
-                        letterSpacing: 4,
-                      ),
-                    ),
-                    const Spacer(),
-                    const SizedBox(width: 48), // Balance
-                  ],
-                ),
-                const SizedBox(height: 32),
-                // Score cards
-                BlocBuilder<GameCubit, GameState>(
-                  builder: (context, state) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildScoreCard(
-                          'X',
-                          99,
-                          const Color(0xFFE63946),
-                          isActive: false,
-                        ),
-                        _buildScoreCard(
-                          'O',
-                          99,
-                          const Color(0xFF4ECDC4),
-                          isActive: false,
-                        ),
-                      ],
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-                // Turn indicator
-                BlocBuilder<GameCubit, GameState>(
-                  builder: (context, state) {
-                    return AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withAlpha(15),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Text(
-                        'XXXXXX',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white.withAlpha(200),
-                        ),
-                      ),
-                    );
-                  },
+                Padding(
+                  padding: .only(top: 16),
+                  child: _GameBoard(),
                 ),
                 const Spacer(),
-                // Game grid
-                BlocBuilder<GameCubit, GameState>(
-                  builder: (context, state) {
-                    final gameBoard = state.mapOrNull(
-                      game: (game) => game.board,
-                    );
-
-                    return AspectRatio(
-                      aspectRatio: 1,
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withAlpha(50),
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(
-                            color: Colors.white.withAlpha(15),
-                            width: 1,
-                          ),
-                        ),
-                        child: GridView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                crossAxisSpacing: 12,
-                                mainAxisSpacing: 12,
-                              ),
-                          itemCount: 9,
-                          itemBuilder: (context, index) {
-                            return GameCell(
-                              index: index,
-                              value: gameBoard?[index],
-                              isWinningCell: false,
-                              isGameOver: false,
-                              onTap: () {
-                                context.read<GameCubit>().cellTapped(index);
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                _ScoreCards(),
                 const Spacer(),
-                // Reset button
-                TextButton.icon(
-                  onPressed: () {
-                    context.read<GameCubit>().resetGame();
-                  },
-                  icon: const Icon(
-                    Icons.refresh_rounded,
-                    color: Colors.white54,
-                  ),
-                  label: Text(
-                    'RESET BOARD',
-                    style: TextStyle(
-                      color: Colors.white.withAlpha(140),
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ),
+                _ResetBoardButton(),
                 const SizedBox(height: 16),
               ],
             ),
@@ -170,50 +41,155 @@ class GameScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildScoreCard(
-    String symbol,
-    int score,
-    Color color, {
-    required bool isActive,
-  }) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+class _GameBoard extends StatelessWidget {
+  const _GameBoard();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GameCubit, GameState>(
+      buildWhen: (previous, current) {
+        return current.mapOrNull(
+              game: (game) => game.board,
+            ) !=
+            null;
+      },
+      builder: (context, state) {
+        final gameBoard = state.mapOrNull(
+          game: (game) => game.board,
+        );
+
+        return AspectRatio(
+          aspectRatio: 1,
+          child: Container(
+            padding: const .all(12),
+            decoration: BoxDecoration(
+              color: Colors.black.withAlpha(50),
+              borderRadius: BorderRadius.circular(24),
+              border: .all(
+                color: Colors.white.withAlpha(15),
+                width: 1,
+              ),
+            ),
+            child: GridView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
+              itemCount: 9,
+              itemBuilder: (context, index) {
+                return GameCell(
+                  index: index,
+                  value: gameBoard?[index],
+                  isWinningCell: false,
+                  isGameOver: false,
+                  onTap: () {
+                    context.read<GameCubit>().selectCell(index);
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ResetBoardButton extends StatelessWidget {
+  const _ResetBoardButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      onPressed: () {
+        context.read<GameCubit>().resetGame();
+      },
+      icon: const Icon(
+        Icons.refresh_rounded,
+        color: Colors.white54,
+      ),
+      label: Text(
+        'RESET BOARD',
+        style: TextStyle(
+          color: Colors.white.withAlpha(140),
+          letterSpacing: 1,
+        ),
+      ),
+    );
+  }
+}
+
+class _ScoreCards extends StatelessWidget {
+  const _ScoreCards();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GameCubit, GameState>(
+      buildWhen: (previous, current) =>
+          current.mapOrNull(
+            game: (value) => value,
+          ) !=
+          null,
+      builder: (context, state) {
+        final xPlayer = state.mapOrNull(game: (value) => value.xPlayer);
+        final oPlayer = state.mapOrNull(game: (value) => value.oPlayer);
+
+        return Row(
+          mainAxisAlignment: .spaceEvenly,
+          children: [
+            if (xPlayer != null)
+              _ScoreCard(
+                player: xPlayer,
+              ),
+            if (oPlayer != null)
+              _ScoreCard(
+                player: oPlayer,
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _ScoreCard extends StatelessWidget {
+  const _ScoreCard({
+    required this.player,
+  });
+
+  final Player player;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const .symmetric(horizontal: 32, vertical: 16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isActive
-              ? [color.withAlpha(75), color.withAlpha(50)]
-              : [Colors.white.withAlpha(13), Colors.white.withAlpha(8)],
+          begin: .topLeft,
+          end: .bottomRight,
+          colors: [Colors.white.withAlpha(13), Colors.white.withAlpha(8)],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isActive ? color.withAlpha(130) : Colors.white.withAlpha(25),
-          width: isActive ? 2 : 1,
+        border: .all(
+          color: Colors.white.withAlpha(25),
+          width: 1,
         ),
-        boxShadow: isActive
-            ? [
-                BoxShadow(
-                  color: color.withAlpha(50),
-                  blurRadius: 16,
-                  spreadRadius: 2,
-                ),
-              ]
-            : null,
       ),
       child: Column(
         children: [
           Text(
-            symbol,
+            player.symbol,
             style: TextStyle(
               fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: color,
+              fontWeight: .bold,
+              color: player.color,
               shadows: [
                 Shadow(
-                  color: color.withAlpha(130),
+                  color: player.color.withAlpha(130),
                   blurRadius: 8,
                 ),
               ],
@@ -221,10 +197,10 @@ class GameScreen extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            '$score',
+            '${player.score}',
             style: TextStyle(
               fontSize: 24,
-              fontWeight: FontWeight.w600,
+              fontWeight: .w600,
               color: Colors.white.withAlpha(230),
             ),
           ),

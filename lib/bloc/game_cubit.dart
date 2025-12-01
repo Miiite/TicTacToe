@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:tictactoe/extensions/player_type_extensions.dart';
@@ -20,7 +22,9 @@ class GameCubit extends Cubit<GameState> {
     [2, 4, 6], // Anti-diagonal
   ];
 
-  void cellTapped(int index) {
+  final random = Random();
+
+  void selectCell(int index) {
     state.mapOrNull(
       game: ((game) {
         final newState = game.selectCell(index).nextTurn();
@@ -36,8 +40,10 @@ class GameCubit extends Cubit<GameState> {
   void resetGame() {
     emit(
       GameState.game(
-        playerTurn: PlayerType.x,
+        playerTurn: random.nextBool() ? PlayerType.x : PlayerType.o,
         board: List.filled(gridSize, null),
+        oPlayer: Player(type: PlayerType.o),
+        xPlayer: Player(type: PlayerType.x),
       ),
     );
   }
@@ -53,8 +59,8 @@ class GameState with _$GameState {
   factory GameState.game({
     required PlayerType playerTurn,
     required List<PlayerType?> board,
-    @Default(0) int xScore,
-    @Default(0) int oScore,
+    required Player xPlayer,
+    required Player oPlayer,
   }) = _Game;
   factory GameState.result({
     @Default(0) int xScore,

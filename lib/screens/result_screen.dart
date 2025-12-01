@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tictactoe/bloc/game_cubit.dart';
+import 'package:tictactoe/utils/game_colors.dart';
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key});
@@ -63,21 +64,13 @@ class _ResultScreenState extends State<ResultScreen>
 
         return Scaffold(
           body: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF0D1B2A),
-                  Color(0xFF1B263B),
-                  Color(0xFF415A77),
-                ],
-              ),
+            decoration: BoxDecoration(
+              gradient: GameColors.backgroundGradient,
             ),
             child: SafeArea(
               child: Center(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: .center,
                   children: [
                     // Animated result display
                     FadeTransition(
@@ -98,7 +91,7 @@ class _ResultScreenState extends State<ResultScreen>
                                     winnerColor.withAlpha(13),
                                   ],
                                 ),
-                                border: Border.all(
+                                border: .all(
                                   color: winnerColor.withAlpha(100),
                                   width: 2,
                                 ),
@@ -124,7 +117,7 @@ class _ResultScreenState extends State<ResultScreen>
                               isDraw ? "IT'S A DRAW!" : 'WINNER!',
                               style: TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: .w500,
                                 color: Colors.white.withAlpha(180),
                                 letterSpacing: 4,
                               ),
@@ -133,7 +126,7 @@ class _ResultScreenState extends State<ResultScreen>
                             // Winner symbol
                             if (!isDraw)
                               Container(
-                                padding: const EdgeInsets.symmetric(
+                                padding: const .symmetric(
                                   horizontal: 40,
                                   vertical: 20,
                                 ),
@@ -145,7 +138,7 @@ class _ResultScreenState extends State<ResultScreen>
                                     ],
                                   ),
                                   borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
+                                  border: .all(
                                     color: winnerColor.withAlpha(130),
                                     width: 2,
                                   ),
@@ -154,7 +147,7 @@ class _ResultScreenState extends State<ResultScreen>
                                   isXWinner ? 'X' : 'O',
                                   style: TextStyle(
                                     fontSize: 64,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: .bold,
                                     color: winnerColor,
                                     shadows: [
                                       Shadow(
@@ -174,17 +167,17 @@ class _ResultScreenState extends State<ResultScreen>
                     FadeTransition(
                       opacity: _fadeAnimation,
                       child: Container(
-                        padding: const EdgeInsets.all(24),
-                        margin: const EdgeInsets.symmetric(horizontal: 48),
+                        padding: const .all(24),
+                        margin: const .symmetric(horizontal: 48),
                         decoration: BoxDecoration(
                           color: Colors.white.withAlpha(13),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
+                          border: .all(
                             color: Colors.white.withAlpha(25),
                           ),
                         ),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: .spaceEvenly,
                           children: [
                             _buildScoreSummary(
                               'X',
@@ -218,7 +211,7 @@ class _ResultScreenState extends State<ResultScreen>
                               context.go('/game');
                             },
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
+                              padding: const .symmetric(
                                 horizontal: 48,
                                 vertical: 16,
                               ),
@@ -253,7 +246,7 @@ class _ResultScreenState extends State<ResultScreen>
                                     'PLAY AGAIN',
                                     style: TextStyle(
                                       fontSize: 16,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: .w600,
                                       color: Colors.white,
                                       letterSpacing: 2,
                                       shadows: [
@@ -308,7 +301,7 @@ class _ResultScreenState extends State<ResultScreen>
           symbol,
           style: TextStyle(
             fontSize: 24,
-            fontWeight: FontWeight.bold,
+            fontWeight: .bold,
             color: color,
           ),
         ),
@@ -317,7 +310,7 @@ class _ResultScreenState extends State<ResultScreen>
           '$score',
           style: TextStyle(
             fontSize: 28,
-            fontWeight: FontWeight.w600,
+            fontWeight: .w600,
             color: Colors.white.withAlpha(230),
           ),
         ),

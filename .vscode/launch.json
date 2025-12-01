@@ -9,7 +9,8 @@
       "request": "launch",
       "type": "dart",
       "flutterMode": "debug",
-      "internalConsoleOptions": "openOnSessionStart"
+      "internalConsoleOptions": "openOnSessionStart",
+      "args": ["--enable-experiment=dot-shorthands"]
     }
   ]
 }

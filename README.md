@@ -1,4 +1,8 @@
-# initial prompt
+# Environment
+
+Project uses Flutter 3.38.3
+
+# Initial prompt
 
 "Create a tictactoe game following these rules:
 

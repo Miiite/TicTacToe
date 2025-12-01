@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tictactoe/utils/game_colors.dart';
 
 import '../bloc/game_cubit.dart';
 
@@ -11,38 +12,30 @@ class NewGameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF0D1B2A),
-              Color(0xFF1B263B),
-              Color(0xFF415A77),
-            ],
-          ),
+        decoration: BoxDecoration(
+          gradient: GameColors.backgroundGradient,
         ),
         child: SafeArea(
           child: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: .center,
               children: [
                 // Title with X O styling
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: .center,
                   children: [
                     Text(
                       'TIC',
                       style: TextStyle(
                         fontSize: 48,
-                        fontWeight: FontWeight.w300,
+                        fontWeight: .w300,
                         color: Colors.white.withAlpha(230),
                         letterSpacing: 8,
                       ),
                     ),
                     const SizedBox(width: 12),
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const .all(12),
                       decoration: BoxDecoration(
                         color: const Color(0xFFE63946),
                         borderRadius: BorderRadius.circular(8),
@@ -51,14 +44,14 @@ class NewGameScreen extends StatelessWidget {
                         'X',
                         style: TextStyle(
                           fontSize: 36,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: .bold,
                           color: Colors.white,
                         ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const .all(12),
                       decoration: BoxDecoration(
                         color: const Color(0xFF4ECDC4),
                         borderRadius: BorderRadius.circular(8),
@@ -67,7 +60,7 @@ class NewGameScreen extends StatelessWidget {
                         'O',
                         style: TextStyle(
                           fontSize: 36,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: .bold,
                           color: Colors.white,
                         ),
                       ),
@@ -79,7 +72,7 @@ class NewGameScreen extends StatelessWidget {
                   'TAC TOE',
                   style: TextStyle(
                     fontSize: 48,
-                    fontWeight: FontWeight.w300,
+                    fontWeight: .w300,
                     color: Colors.white.withAlpha(230),
                     letterSpacing: 16,
                   ),
@@ -92,7 +85,7 @@ class NewGameScreen extends StatelessWidget {
                     context.go('/game');
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
+                    padding: const .symmetric(
                       horizontal: 64,
                       vertical: 20,
                     ),
@@ -122,7 +115,7 @@ class NewGameScreen extends StatelessWidget {
                           'NEW GAME',
                           style: TextStyle(
                             fontSize: 20,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: .w600,
                             color: Colors.white,
                             letterSpacing: 2,
                             shadows: [
@@ -149,10 +142,10 @@ class NewGameScreen extends StatelessWidget {
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 4,
-                        mainAxisSpacing: 4,
-                      ),
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 4,
+                            mainAxisSpacing: 4,
+                          ),
                       itemCount: 9,
                       itemBuilder: (context, index) {
                         return Container(
