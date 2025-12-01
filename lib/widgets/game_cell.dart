@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tictactoe/utils/game_colors.dart';
 
 import '../models/models.dart';
 import '../services/sound_service.dart';
@@ -6,7 +7,6 @@ import '../services/sound_service.dart';
 class GameCell extends StatefulWidget {
   final int index;
   final PlayerType? value;
-  final bool isWinningCell;
   final bool isGameOver;
   final VoidCallback onTap;
 
@@ -14,7 +14,6 @@ class GameCell extends StatefulWidget {
     super.key,
     required this.index,
     required this.value,
-    required this.isWinningCell,
     required this.isGameOver,
     required this.onTap,
   });
@@ -88,25 +87,11 @@ class _GameCellState extends State<GameCell> with SingleTickerProviderStateMixin
         duration: const Duration(milliseconds: 150),
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: .topLeft,
-              end: .bottomRight,
-              colors: widget.isWinningCell
-                  ? [
-                      const Color(0xFF4ECDC4).withAlpha(80),
-                      const Color(0xFF44CF6C).withAlpha(80),
-                    ]
-                  : [
-                      const Color(0xFF1B263B),
-                      const Color(0xFF2D3E50),
-                    ],
-            ),
+            gradient: GameColors.cellGradient,
             borderRadius: BorderRadius.circular(16),
             border: .all(
-              color: widget.isWinningCell
-                  ? const Color(0xFF4ECDC4)
-                  : Colors.white.withAlpha(25),
-              width: widget.isWinningCell ? 2 : 1,
+              color: Colors.white.withAlpha(25),
+              width: 1,
             ),
             boxShadow: [
               BoxShadow(
@@ -114,12 +99,6 @@ class _GameCellState extends State<GameCell> with SingleTickerProviderStateMixin
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
-              if (widget.isWinningCell)
-                BoxShadow(
-                  color: const Color(0xFF4ECDC4).withAlpha(75),
-                  blurRadius: 16,
-                  spreadRadius: 2,
-                ),
             ],
           ),
           child: Center(

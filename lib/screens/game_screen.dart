@@ -10,6 +10,18 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentColorGradient = context.select((GameCubit cubit){
+      return cubit.state.maybeMap(
+        game: (value) {
+          return switch(value.playerTurn){
+            PlayerType.x => GameColors.redGradient,
+            PlayerType.o => GameColors.greenGradient,
+          };
+        },
+        orElse: () => GameColors.backgroundGradient,
+      );
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('TIC TAC TOE'),
@@ -18,7 +30,7 @@ class GameScreen extends StatelessWidget {
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: BoxDecoration(
-          gradient: GameColors.backgroundGradient,
+          gradient: currentColorGradient,
         ),
         child: SafeArea(
           child: Padding(
@@ -84,7 +96,6 @@ class _GameBoard extends StatelessWidget {
                 return GameCell(
                   index: index,
                   value: gameBoard?[index],
-                  isWinningCell: false,
                   isGameOver: false,
                   onTap: () {
                     context.read<GameCubit>().selectCell(index);
@@ -168,11 +179,7 @@ class _ScoreCard extends StatelessWidget {
     return Container(
       padding: const .symmetric(horizontal: 32, vertical: 16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: .topLeft,
-          end: .bottomRight,
-          colors: [Colors.white.withAlpha(13), Colors.white.withAlpha(8)],
-        ),
+        gradient: GameColors.cellGradient,
         borderRadius: BorderRadius.circular(20),
         border: .all(
           color: Colors.white.withAlpha(25),
