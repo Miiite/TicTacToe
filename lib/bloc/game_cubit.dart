@@ -18,6 +18,9 @@ class GameCubit extends Cubit<GameState> {
       );
 
   static const int gridSize = 9;
+
+  // OK for small grid sizes, but should be dynamic if we were to make
+  // a bigger titactoe board game.
   static const List<List<int>> winPatterns = [
     [0, 1, 2], // Top row
     [3, 4, 5], // Middle row
