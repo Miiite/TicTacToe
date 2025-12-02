@@ -11,13 +11,22 @@ class AnimatedScoreSummary extends HookWidget {
     super.key,
     required this.duration,
     this.backgroundColor,
+    this.showActivePlayerIndicator,
   });
 
   final Duration duration;
   final Color? backgroundColor;
+  final bool? showActivePlayerIndicator;
 
   @override
   Widget build(BuildContext context) {
+    final playingPlayer = context.select((GameCubit cubit) {
+      return cubit.state.mapOrNull(
+        game: (value) => value.playing,
+      );
+    });
+    final localShowActivePlayerIndicator = showActivePlayerIndicator ?? false;
+
     final controller = useAnimationController(
       duration: duration,
     );
@@ -46,7 +55,11 @@ class AnimatedScoreSummary extends HookWidget {
         child: Row(
           mainAxisAlignment: .spaceEvenly,
           children: [
-            _XPlayerScore(),
+            _XPlayerScore(
+              isSelected:
+                  localShowActivePlayerIndicator &&
+                  playingPlayer?.type == ActionType.x,
+            ),
             SizedBox(
               height: 50,
               child: VerticalDivider(
@@ -54,7 +67,11 @@ class AnimatedScoreSummary extends HookWidget {
                 thickness: 1,
               ),
             ),
-            _OPlayerScore(),
+            _OPlayerScore(
+              isSelected:
+                  localShowActivePlayerIndicator &&
+                  playingPlayer?.type == ActionType.o,
+            ),
           ],
         ),
       ),
@@ -63,7 +80,11 @@ class AnimatedScoreSummary extends HookWidget {
 }
 
 class _XPlayerScore extends StatelessWidget {
-  const _XPlayerScore();
+  const _XPlayerScore({
+    this.isSelected,
+  });
+
+  final bool? isSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +93,7 @@ class _XPlayerScore extends StatelessWidget {
     });
 
     return _ScoreSummary(
+      isSelected: isSelected,
       symbol: ActionType.x.symbol,
       score: score,
       color: GameColors.red,
@@ -80,7 +102,11 @@ class _XPlayerScore extends StatelessWidget {
 }
 
 class _OPlayerScore extends StatelessWidget {
-  const _OPlayerScore();
+  const _OPlayerScore({
+    this.isSelected,
+  });
+
+  final bool? isSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -89,6 +115,7 @@ class _OPlayerScore extends StatelessWidget {
     });
 
     return _ScoreSummary(
+      isSelected: isSelected,
       symbol: ActionType.o.symbol,
       score: score,
       color: GameColors.green,
@@ -101,11 +128,13 @@ class _ScoreSummary extends StatelessWidget {
     required this.symbol,
     required this.score,
     required this.color,
+    this.isSelected,
   });
 
   final String symbol;
   final int score;
   final Color color;
+  final bool? isSelected;
 
   @override
   Widget build(BuildContext context) {

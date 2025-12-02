@@ -46,13 +46,6 @@ class GameCell extends HookWidget {
             color: Colors.white.withAlpha(25),
             width: 1,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(50),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Center(
           child: playerType != null

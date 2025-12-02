@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:tictactoe/bloc/game_cubit.dart';
 import 'package:tictactoe/models/player.dart';
 import 'package:tictactoe/utils/game_colors.dart';
 import 'package:tictactoe/widgets/animated_score_summary.dart';
 import 'package:tictactoe/widgets/game_cell.dart';
+
+const _animationDuration = Duration(milliseconds: 300);
 
 class GameScreen extends StatelessWidget {
   const GameScreen({super.key});
@@ -53,6 +56,7 @@ class GameScreen extends StatelessWidget {
                 AnimatedScoreSummary(
                   duration: .zero,
                   backgroundColor: const Color(0xFF2D3E50),
+                  showActivePlayerIndicator: true,
                 ),
                 const Spacer(),
                 _ResetBoardButton(),
@@ -66,8 +70,11 @@ class GameScreen extends StatelessWidget {
   }
 }
 
-class _GameBoard extends StatelessWidget {
+class _GameBoard extends HookWidget {
   const _GameBoard();
+
+  static const _itemSpacing = 12.0;
+  static const _numberOfRows = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -77,37 +84,126 @@ class _GameBoard extends StatelessWidget {
         result: (result) => result.board,
       );
     });
+    final showCells = useState(false);
+    useEffect(() {
+      Future.delayed(
+        Duration(milliseconds: 6 * _animationDuration.inMilliseconds),
+        () {
+          showCells.value = true;
+        },
+      );
+      return null;
+    }, [ValueKey(true)]);
 
     return AspectRatio(
       aspectRatio: 1,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Colors.black.withAlpha(50),
-          borderRadius: .circular(24),
-          border: .all(
-            color: Colors.white.withAlpha(15),
-            width: 1,
-          ),
+      child: Padding(
+        padding: const .all(_itemSpacing),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final cellWidth = constraints.maxWidth / _numberOfRows;
+
+            return Stack(
+              children: [
+                GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: _numberOfRows,
+                  ),
+                  itemCount: _numberOfRows * _numberOfRows,
+                  itemBuilder: (context, index) {
+                    return AnimatedOpacity(
+                      opacity: showCells.value ? 1.0 : 0.0,
+                      duration: _animationDuration,
+                      curve: Curves.easeInOut,
+                      child: Padding(
+                        padding: const .all(_itemSpacing / 2),
+                        child: GameCell(
+                          index: index,
+                          playerType: gameBoard?[index],
+                          onTap: () {
+                            context.read<GameCubit>().selectCell(index);
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                for (int i = 1; i <= _numberOfRows - 1; i++) ...[
+                  // Vertical separator
+                  Positioned(
+                    left: (cellWidth * i) - (_itemSpacing / 8),
+                    top: 0,
+                    bottom: 0,
+                    child: _AnimatedGridSeparator(
+                      delay: Duration(
+                        milliseconds: _animationDuration.inMilliseconds * i,
+                      ),
+                      axis: Axis.vertical,
+                    ),
+                  ),
+                  // Horizontal separator
+                  Positioned(
+                    top: (cellWidth * i) - (_itemSpacing / 8),
+                    left: 0,
+                    right: 0,
+                    child: _AnimatedGridSeparator(
+                      delay: Duration(
+                        milliseconds:
+                            _animationDuration.inMilliseconds * (i + 2),
+                      ),
+                      axis: Axis.horizontal,
+                    ),
+                  ),
+                ],
+              ],
+            );
+          },
         ),
-        child: Padding(
-          padding: const .all(12),
-          child: GridView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-            ),
-            itemCount: 9,
-            itemBuilder: (context, index) {
-              return GameCell(
-                index: index,
-                playerType: gameBoard?[index],
-                onTap: () {
-                  context.read<GameCubit>().selectCell(index);
-                },
-              );
-            },
+      ),
+    );
+  }
+}
+
+class _AnimatedGridSeparator extends HookWidget {
+  const _AnimatedGridSeparator({
+    required this.delay,
+    required this.axis,
+  });
+
+  final Duration delay;
+  final Axis axis;
+
+  @override
+  Widget build(BuildContext context) {
+    final animationController = useAnimationController(
+      duration: _animationDuration,
+    );
+    final animation = useAnimation(
+      Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(
+          parent: animationController,
+          curve: Curves.easeInOut,
+        ),
+      ),
+    );
+
+    useEffect(() {
+      Future.delayed(delay, () {
+        animationController.forward();
+      });
+      return null;
+    }, [ValueKey(true)]);
+
+    return SizedBox(
+      width: 4,
+      child: RotatedBox(
+        quarterTurns: axis == Axis.vertical ? 1 : 0,
+        child: LinearProgressIndicator(
+          value: animation,
+          backgroundColor: Colors.transparent,
+          valueColor: AlwaysStoppedAnimation<Color>(
+            Color(0xFF0C0908),
           ),
         ),
       ),
