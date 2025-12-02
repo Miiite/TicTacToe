@@ -5,16 +5,16 @@ import 'package:tictactoe/models/player.dart';
 import 'package:tictactoe/utils/game_colors.dart';
 
 class GameCell extends HookWidget {
-  final int index;
-  final ActionType? playerType;
-  final VoidCallback onTap;
-
   const GameCell({
     super.key,
     required this.index,
     required this.playerType,
     required this.onTap,
   });
+
+  final int index;
+  final ActionType? playerType;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {

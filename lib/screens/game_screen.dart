@@ -121,9 +121,11 @@ class _GameBoard extends HookWidget {
                         child: GameCell(
                           index: index,
                           playerType: gameBoard?[index],
-                          onTap: () {
-                            context.read<GameCubit>().selectCell(index);
-                          },
+                          onTap: showCells.value
+                              ? () {
+                                  context.read<GameCubit>().selectCell(index);
+                                }
+                              : () {},
                         ),
                       ),
                     );
