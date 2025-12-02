@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tictactoe/bloc/game_cubit.dart';
+import 'package:tictactoe/navigation/app_router.dart';
 import 'package:tictactoe/navigation/game_cubit_navigation_listener.dart';
+import 'package:tictactoe/utils/game_colors.dart';
 
-import 'router/app_router.dart';
 import 'services/sound_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize sound service
-  await SoundService().initialize();
+  await UserFeedbackService().initialize();
 
   runApp(const TicTacToeApp());
 }
@@ -27,7 +27,7 @@ class TicTacToeApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF4ECDC4),
+            seedColor: GameColors.green,
             brightness: Brightness.dark,
           ),
           useMaterial3: true,

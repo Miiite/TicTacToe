@@ -26,9 +26,9 @@ class NewGameScreen extends StatelessWidget {
               children: [
                 _Title(),
                 const SizedBox(height: 80),
-                _PlayButton(),
+                _NewGameButton(),
                 const SizedBox(height: 100),
-                _Illustration(),
+                _AnimatedGrid(),
               ],
             ),
           ),
@@ -52,8 +52,8 @@ class _Title extends StatelessWidget {
           children: [
             DecoratedBox(
               decoration: BoxDecoration(
-                color: const Color(0xFFE63946),
-                borderRadius: BorderRadius.circular(8),
+                color: GameColors.red,
+                borderRadius: .circular(8),
               ),
               child: Padding(
                 padding: const .all(12),
@@ -68,18 +68,20 @@ class _Title extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Container(
-              padding: const .all(12),
+            DecoratedBox(
               decoration: BoxDecoration(
-                color: const Color(0xFF4ECDC4),
+                color: GameColors.green,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Text(
-                PlayerType.o.symbol.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: .bold,
-                  color: Colors.white,
+              child: Padding(
+                padding: const .all(12),
+                child: Text(
+                  PlayerType.o.symbol.toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: .bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -91,7 +93,6 @@ class _Title extends StatelessWidget {
           textAlign: .center,
           style: TextStyle(
             fontSize: 48,
-
             fontWeight: .w300,
             color: Colors.white.withAlpha(230),
             letterSpacing: 16,
@@ -102,8 +103,8 @@ class _Title extends StatelessWidget {
   }
 }
 
-class _PlayButton extends StatelessWidget {
-  const _PlayButton();
+class _NewGameButton extends StatelessWidget {
+  const _NewGameButton();
 
   @override
   Widget build(BuildContext context) {
@@ -117,27 +118,39 @@ class _PlayButton extends StatelessWidget {
   }
 }
 
-class _Illustration extends HookWidget {
-  const _Illustration();
+class _AnimatedGrid extends HookWidget {
+  const _AnimatedGrid();
 
   @override
   Widget build(BuildContext context) {
+    // Creates a Random object instance only once. After the first build,
+    // it will return the same instance each time.
     final randomizer = useMemoized(() => Random());
+    // Creates a state variable that will trigger a rebuild when its value changes.
     final selectedTile = useState(randomizer.nextInt(9));
 
-    useEffect(() {
-      final timer = Timer.periodic(
-        const Duration(seconds: 1),
-        (_) {
-          int newSelectedTile = randomizer.nextInt(9);
-          while (selectedTile.value == newSelectedTile) {
-            newSelectedTile = randomizer.nextInt(9);
-          }
-          selectedTile.value = newSelectedTile;
-        },
-      );
-      return timer.cancel;
-    }, const []);
+    useEffect(
+      () {
+        debugPrint('Create timer');
+        final timer = Timer.periodic(
+          const Duration(seconds: 1),
+          (_) {
+            int newSelectedTile = randomizer.nextInt(9);
+            while (selectedTile.value == newSelectedTile) {
+              newSelectedTile = randomizer.nextInt(9);
+            }
+            selectedTile.value = newSelectedTile;
+          },
+        );
+
+        // This will cancel the running timer when the widget is disposed or if the useEffect callback
+        // is called again (as per the docs)
+        return timer.cancel;
+      },
+      // The key is mandatory to avoid re-creating the timer whenever the widget gets rebuilt
+      // which will happen every time the timer ticks.
+      [ValueKey(true)],
+    );
 
     return SizedBox(
       width: 120,
@@ -151,23 +164,37 @@ class _Illustration extends HookWidget {
         ),
         itemCount: 9,
         itemBuilder: (context, index) {
-          final isSelected = index == selectedTile.value;
-
-          return AnimatedOpacity(
-            opacity: isSelected ? 1.0 : 0.15,
-            duration: Duration(milliseconds: isSelected ? 400 : 0),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? (selectedTile.value % 2 == 0
-                          ? GameColors.red
-                          : GameColors.green)
-                    : Colors.white,
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
+          return _AnimatedGridItem(
+            index: index,
+            isSelected: selectedTile.value == index,
           );
         },
+      ),
+    );
+  }
+}
+
+class _AnimatedGridItem extends StatelessWidget {
+  const _AnimatedGridItem({
+    required this.index,
+    required this.isSelected,
+  });
+
+  final int index;
+  final bool isSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedOpacity(
+      opacity: isSelected ? 1.0 : 0.15,
+      duration: Duration(milliseconds: isSelected ? 400 : 0),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (index.isEven ? GameColors.red : GameColors.green)
+              : Colors.white,
+          borderRadius: .circular(4),
+        ),
       ),
     );
   }

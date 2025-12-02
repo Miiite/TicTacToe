@@ -17,6 +17,8 @@ class GameCubitNavigationListener extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<GameCubit, GameState>(
       listener: (context, state) {
+        // Don't push the pages, to stay in control of the navigation stack
+        // This is specific to a game scenario.
         state.map(
           initial: (_) => router.go('/'),
           game: (game) => router.go('/game'),

@@ -1,11 +1,9 @@
 import 'package:flutter/services.dart';
 
-/// A lightweight sound service that provides subtle haptic and audio feedback.
-/// Uses system haptic feedback for a non-intrusive experience.
-class SoundService {
-  static final SoundService _instance = SoundService._internal();
-  factory SoundService() => _instance;
-  SoundService._internal();
+class UserFeedbackService {
+  static final UserFeedbackService _instance = UserFeedbackService._();
+  factory UserFeedbackService() => _instance;
+  UserFeedbackService._();
 
   bool _initialized = false;
 
@@ -14,19 +12,11 @@ class SoundService {
     _initialized = true;
   }
 
-  /// Plays a subtle tap-down feedback using light haptics
-  Future<void> playTapDown() async {
-    // Light haptic impact for a discreet, non-intrusive feel
+  Future<void> tapDownFeedback() async {
     await HapticFeedback.lightImpact();
   }
 
-  /// Plays a subtle tap-up feedback using selection click
-  Future<void> playTapUp() async {
-    // Selection click for the release - very subtle
+  Future<void> tapUpFeedback() async {
     await HapticFeedback.selectionClick();
-  }
-
-  void dispose() {
-    // Nothing to dispose in this simplified version
   }
 }

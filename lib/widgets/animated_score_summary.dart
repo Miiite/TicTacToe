@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:tictactoe/bloc/game_cubit.dart';
 import 'package:tictactoe/extensions/build_context_extensions.dart';
 import 'package:tictactoe/models/player.dart';
+import 'package:tictactoe/utils/game_colors.dart';
 
 class AnimatedScoreSummary extends HookWidget {
   const AnimatedScoreSummary({
@@ -73,7 +74,7 @@ class _XPlayerScore extends StatelessWidget {
     return _ScoreSummary(
       symbol: PlayerType.x.symbol,
       score: score,
-      color: const Color(0xFFE63946),
+      color: GameColors.red,
     );
   }
 }
@@ -90,7 +91,7 @@ class _OPlayerScore extends StatelessWidget {
     return _ScoreSummary(
       symbol: PlayerType.o.symbol,
       score: score,
-      color: const Color(0xFF4ECDC4),
+      color: GameColors.green,
     );
   }
 }

@@ -125,17 +125,9 @@ class _GameResultMessage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.read<GameCubit>().state;
-    final isXWinner = state.maybeMap(
-      result: (value) => value.isXWinner,
-      orElse: () => false,
-    );
-    final isOWinner = state.maybeMap(
-      result: (value) => value.isOWinner,
-      orElse: () => false,
-    );
-    final isDraw = state.maybeMap(
-      result: (value) => value.isDraw,
-      orElse: () => false,
+    final (isXWinner, isOWinner, isDraw) = state.maybeMap(
+      result: (value) => (value.isXWinner, value.isOWinner, value.isDraw),
+      orElse: () => (false, false, false),
     );
 
     final winnerColor = isXWinner

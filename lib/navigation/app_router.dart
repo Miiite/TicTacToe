@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import '../screens/screens.dart';
+import 'package:tictactoe/screens/game_screen.dart';
+import 'package:tictactoe/screens/new_game_screen.dart';
+import 'package:tictactoe/screens/result_screen.dart';
 
 class AppRouter {
-  static final GoRouter router = GoRouter(
+  static final router = GoRouter(
     initialLocation: '/',
     routes: [
       GoRoute(
