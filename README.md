@@ -21,8 +21,6 @@ https://github.com/user-attachments/assets/db229b96-fbca-4914-9996-989e9884432b
 - [flutter_confetti](https://pub.dev/packages/flutter_confetti) for ... fun ?
 
 
-
-
 # Initial prompt (used to generate the project skeleton prior to manual editions)
 
 ```

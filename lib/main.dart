@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tictactoe/bloc/game_cubit.dart';
 import 'package:tictactoe/navigation/app_router.dart';
 import 'package:tictactoe/navigation/game_cubit_navigation_listener.dart';
-import 'package:tictactoe/services/user_feedback_service.dart';
 import 'package:tictactoe/utils/game_colors.dart';
 
 void main() async {
@@ -13,8 +12,6 @@ void main() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-
-  await UserFeedbackService().initialize();
 
   runApp(const TicTacToeApp());
 }
