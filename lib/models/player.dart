@@ -5,12 +5,12 @@ import 'package:tictactoe/extensions/player_type_extensions.dart';
 
 part 'player.freezed.dart';
 
-enum PlayerType {
+enum ActionType {
   x('X'),
   o('O')
   ;
 
-  const PlayerType(this.symbol);
+  const ActionType(this.symbol);
 
   final String symbol;
 }
@@ -18,7 +18,7 @@ enum PlayerType {
 @freezed
 sealed class Player with _$Player {
   const factory Player({
-    required PlayerType type,
+    required ActionType type,
     @Default(0) int score,
   }) = _Player;
 

@@ -6,12 +6,14 @@ import 'package:tictactoe/models/player.dart';
 
 part 'game_cubit.freezed.dart';
 
+typedef GameBoard = List<ActionType?>;
+
 class GameCubit extends Cubit<GameState> {
   GameCubit()
     : super(
         GameState.initial(
-          xPlayer: Player(type: PlayerType.x),
-          oPlayer: Player(type: PlayerType.o),
+          xPlayer: Player(type: ActionType.x),
+          oPlayer: Player(type: ActionType.o),
         ),
       );
 
@@ -41,6 +43,7 @@ class GameCubit extends Cubit<GameState> {
             GameState.result(
               oPlayer: state.oPlayer,
               xPlayer: state.xPlayer,
+              board: newState.board,
             ),
           );
         } else {
@@ -48,13 +51,14 @@ class GameCubit extends Cubit<GameState> {
 
           emit(
             GameState.result(
+              board: newState.board,
               oPlayer: state.oPlayer.copyWith(
                 score:
-                    state.oPlayer.score + (winnerType == PlayerType.o ? 1 : 0),
+                    state.oPlayer.score + (winnerType == ActionType.o ? 1 : 0),
               ),
               xPlayer: state.xPlayer.copyWith(
                 score:
-                    state.xPlayer.score + (winnerType == PlayerType.x ? 1 : 0),
+                    state.xPlayer.score + (winnerType == ActionType.x ? 1 : 0),
               ),
               winner: winnerType == state.xPlayer.type
                   ? state.xPlayer
@@ -106,7 +110,7 @@ sealed class GameState with _$GameState {
   }) = _Initial;
   factory GameState.game({
     required Player playing,
-    required List<PlayerType?> board,
+    required GameBoard board,
     required Player xPlayer,
     required Player oPlayer,
   }) = _Game;
@@ -114,12 +118,13 @@ sealed class GameState with _$GameState {
     Player? winner,
     required Player xPlayer,
     required Player oPlayer,
+    required GameBoard board,
   }) = Result;
 }
 
 extension ResultExtensions on Result {
-  bool get isXWinner => winner?.type == PlayerType.x;
-  bool get isOWinner => winner?.type == PlayerType.o;
+  bool get isXWinner => winner?.type == ActionType.x;
+  bool get isOWinner => winner?.type == ActionType.o;
   bool get isDraw => winner == null;
 }
 
@@ -132,13 +137,13 @@ extension on _Game {
     return board.every((cell) => cell != null);
   }
 
-  PlayerType? getWinnerType() {
+  ActionType? getWinnerType() {
     for (final pattern in GameCubit.winPatterns) {
       final values = pattern.map((index) => board[index]).toList();
-      if (values.every((cell) => cell == PlayerType.x)) {
-        return PlayerType.x;
-      } else if (values.every((cell) => cell == PlayerType.o)) {
-        return PlayerType.o;
+      if (values.every((cell) => cell == ActionType.x)) {
+        return ActionType.x;
+      } else if (values.every((cell) => cell == ActionType.o)) {
+        return ActionType.o;
       }
     }
 

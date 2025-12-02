@@ -72,7 +72,7 @@ class _XPlayerScore extends StatelessWidget {
     });
 
     return _ScoreSummary(
-      symbol: PlayerType.x.symbol,
+      symbol: ActionType.x.symbol,
       score: score,
       color: GameColors.red,
     );
@@ -89,7 +89,7 @@ class _OPlayerScore extends StatelessWidget {
     });
 
     return _ScoreSummary(
-      symbol: PlayerType.o.symbol,
+      symbol: ActionType.o.symbol,
       score: score,
       color: GameColors.green,
     );

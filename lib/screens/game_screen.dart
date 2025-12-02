@@ -11,12 +11,12 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentColorGradient = context.select((GameCubit cubit) {
+    final backgroundGradient = context.select((GameCubit cubit) {
       return cubit.state.maybeMap(
         game: (value) {
           return switch (value.playing.type) {
-            PlayerType.x => GameColors.redGradient,
-            PlayerType.o => GameColors.greenGradient,
+            ActionType.x => GameColors.redGradient,
+            ActionType.o => GameColors.greenGradient,
           };
         },
         orElse: () => GameColors.backgroundGradient,
@@ -36,9 +36,9 @@ class GameScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
       ),
       extendBodyBehindAppBar: true,
-      body: Container(
+      body: DecoratedBox(
         decoration: BoxDecoration(
-          gradient: currentColorGradient,
+          gradient: backgroundGradient,
         ),
         child: SafeArea(
           child: Padding(
@@ -51,7 +51,7 @@ class GameScreen extends StatelessWidget {
                 ),
                 const Spacer(),
                 AnimatedScoreSummary(
-                  duration: Duration.zero,
+                  duration: .zero,
                   backgroundColor: const Color(0xFF2D3E50),
                 ),
                 const Spacer(),
@@ -71,52 +71,46 @@ class _GameBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GameCubit, GameState>(
-      buildWhen: (previous, current) {
-        return current.mapOrNull(
-              game: (game) => game.board,
-            ) !=
-            null;
-      },
-      builder: (context, state) {
-        final gameBoard = state.mapOrNull(
-          game: (game) => game.board,
-        );
+    final gameBoard = context.select((GameCubit cubit) {
+      return cubit.state.mapOrNull(
+        game: (game) => game.board,
+        result: (result) => result.board,
+      );
+    });
 
-        return AspectRatio(
-          aspectRatio: 1,
-          child: Container(
-            padding: const .all(12),
-            decoration: BoxDecoration(
-              color: Colors.black.withAlpha(50),
-              borderRadius: BorderRadius.circular(24),
-              border: .all(
-                color: Colors.white.withAlpha(15),
-                width: 1,
-              ),
-            ),
-            child: GridView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
-              itemCount: 9,
-              itemBuilder: (context, index) {
-                return GameCell(
-                  index: index,
-                  value: gameBoard?[index],
-                  isGameOver: false,
-                  onTap: () {
-                    context.read<GameCubit>().selectCell(index);
-                  },
-                );
-              },
-            ),
+    return AspectRatio(
+      aspectRatio: 1,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.black.withAlpha(50),
+          borderRadius: .circular(24),
+          border: .all(
+            color: Colors.white.withAlpha(15),
+            width: 1,
           ),
-        );
-      },
+        ),
+        child: Padding(
+          padding: const .all(12),
+          child: GridView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+            ),
+            itemCount: 9,
+            itemBuilder: (context, index) {
+              return GameCell(
+                index: index,
+                playerType: gameBoard?[index],
+                onTap: () {
+                  context.read<GameCubit>().selectCell(index);
+                },
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

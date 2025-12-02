@@ -58,7 +58,7 @@ class _Title extends StatelessWidget {
               child: Padding(
                 padding: const .all(12),
                 child: Text(
-                  PlayerType.x.symbol.toUpperCase(),
+                  ActionType.x.symbol.toUpperCase(),
                   style: TextStyle(
                     fontSize: 36,
                     fontWeight: .bold,
@@ -76,7 +76,7 @@ class _Title extends StatelessWidget {
               child: Padding(
                 padding: const .all(12),
                 child: Text(
-                  PlayerType.o.symbol.toUpperCase(),
+                  ActionType.o.symbol.toUpperCase(),
                   style: TextStyle(
                     fontSize: 36,
                     fontWeight: .bold,

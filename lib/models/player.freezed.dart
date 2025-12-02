@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Player {
 
- PlayerType get type; int get score;
+ ActionType get type; int get score;
 /// Create a copy of Player
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +45,7 @@ abstract mixin class $PlayerCopyWith<$Res>  {
   factory $PlayerCopyWith(Player value, $Res Function(Player) _then) = _$PlayerCopyWithImpl;
 @useResult
 $Res call({
- PlayerType type, int score
+ ActionType type, int score
 });
 
 
@@ -65,7 +65,7 @@ class _$PlayerCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? type = null,Object? score = null,}) {
   return _then(_self.copyWith(
 type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as PlayerType,score: null == score ? _self.score : score // ignore: cast_nullable_to_non_nullable
+as ActionType,score: null == score ? _self.score : score // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -148,7 +148,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( PlayerType type,  int score)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ActionType type,  int score)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Player() when $default != null:
 return $default(_that.type,_that.score);case _:
@@ -169,7 +169,7 @@ return $default(_that.type,_that.score);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( PlayerType type,  int score)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ActionType type,  int score)  $default,) {final _that = this;
 switch (_that) {
 case _Player():
 return $default(_that.type,_that.score);}
@@ -186,7 +186,7 @@ return $default(_that.type,_that.score);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( PlayerType type,  int score)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ActionType type,  int score)?  $default,) {final _that = this;
 switch (_that) {
 case _Player() when $default != null:
 return $default(_that.type,_that.score);case _:
@@ -204,7 +204,7 @@ class _Player extends Player {
   const _Player({required this.type, this.score = 0}): super._();
   
 
-@override final  PlayerType type;
+@override final  ActionType type;
 @override@JsonKey() final  int score;
 
 /// Create a copy of Player
@@ -237,7 +237,7 @@ abstract mixin class _$PlayerCopyWith<$Res> implements $PlayerCopyWith<$Res> {
   factory _$PlayerCopyWith(_Player value, $Res Function(_Player) _then) = __$PlayerCopyWithImpl;
 @override @useResult
 $Res call({
- PlayerType type, int score
+ ActionType type, int score
 });
 
 
@@ -257,7 +257,7 @@ class __$PlayerCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? type = null,Object? score = null,}) {
   return _then(_Player(
 type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as PlayerType,score: null == score ? _self.score : score // ignore: cast_nullable_to_non_nullable
+as ActionType,score: null == score ? _self.score : score // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }

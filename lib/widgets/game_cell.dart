@@ -6,22 +6,20 @@ import 'package:tictactoe/utils/game_colors.dart';
 
 class GameCell extends HookWidget {
   final int index;
-  final PlayerType? value;
-  final bool isGameOver;
+  final ActionType? playerType;
   final VoidCallback onTap;
 
   const GameCell({
     super.key,
     required this.index,
-    required this.value,
-    required this.isGameOver,
+    required this.playerType,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final animationController = useAnimationController(
-      keys: [ValueKey(value)],
+      keys: [ValueKey(playerType)],
       duration: const Duration(milliseconds: 200),
     );
     final scaleAnimation = useAnimation(
@@ -39,7 +37,7 @@ class GameCell extends HookWidget {
     });
 
     return _Pressable(
-      onTap: onTap,
+      onTap: playerType == null ? onTap : null,
       child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: GameColors.cellGradient,
@@ -57,18 +55,19 @@ class GameCell extends HookWidget {
           ],
         ),
         child: Center(
-          child: value != null
+          child: playerType != null
               ? ScaleTransition(
                   scale: AlwaysStoppedAnimation(scaleAnimation),
                   child: Text(
-                    value?.symbol.toUpperCase() ?? '',
+                    playerType?.symbol.toUpperCase() ?? '',
                     style: TextStyle(
                       fontSize: 48,
                       fontWeight: .bold,
-                      color: value?.color,
+                      color: playerType?.color,
                       shadows: [
                         Shadow(
-                          color: value?.color.withAlpha(130) ?? Colors.black,
+                          color:
+                              playerType?.color.withAlpha(130) ?? Colors.black,
                           blurRadius: 12,
                         ),
                       ],
@@ -88,7 +87,7 @@ class _Pressable extends StatefulWidget {
     required this.child,
   });
 
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final Widget child;
 
   @override
@@ -102,15 +101,20 @@ class __PressableState extends State<_Pressable> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: (details) {
-        setState(() {
-          _isPressed = true;
-        });
+        if (widget.onTap != null) {
+          setState(() {
+            _isPressed = true;
+          });
+        }
       },
       onTapUp: (details) {
-        setState(() {
-          _isPressed = false;
-        });
-        widget.onTap.call();
+        if (widget.onTap case final onTap?) {
+          setState(() {
+            _isPressed = false;
+          });
+
+          onTap.call();
+        }
       },
       child: AnimatedScale(
         scale: _isPressed ? 0.95 : 1.0,
