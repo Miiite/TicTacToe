@@ -131,7 +131,6 @@ class _AnimatedGrid extends HookWidget {
 
     useEffect(
       () {
-        debugPrint('Create timer');
         final timer = Timer.periodic(
           const Duration(seconds: 1),
           (_) {
@@ -149,7 +148,7 @@ class _AnimatedGrid extends HookWidget {
       },
       // The key is mandatory to avoid re-creating the timer whenever the widget gets rebuilt
       // which will happen every time the timer ticks.
-      [ValueKey(true)],
+      [true],
     );
 
     return SizedBox(

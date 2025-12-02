@@ -19,7 +19,7 @@ class GameCell extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final animationController = useAnimationController(
-      keys: [ValueKey(playerType)],
+      keys: [playerType],
       duration: const Duration(milliseconds: 200),
     );
     final scaleAnimation = useAnimation(

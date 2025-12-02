@@ -30,6 +30,9 @@ class AnimatedScoreSummary extends HookWidget {
     final controller = useAnimationController(
       duration: duration,
     );
+    final fadeAnimation = useMemoized(() {
+      return context.fadeAnimation(controller: controller);
+    }, [controller]);
 
     useEffect(
       () {
@@ -37,11 +40,11 @@ class AnimatedScoreSummary extends HookWidget {
         return null;
       },
       // Make sure this callback is called only once
-      [ValueKey(true)],
+      [controller],
     );
 
     return FadeTransition(
-      opacity: context.fadeAnimation(controller: controller),
+      opacity: fadeAnimation,
       child: Container(
         padding: const .all(24),
         margin: const .symmetric(horizontal: 48),
@@ -93,7 +96,6 @@ class _XPlayerScore extends StatelessWidget {
     });
 
     return _ScoreSummary(
-      isSelected: isSelected,
       symbol: ActionType.x.symbol,
       score: score,
       color: GameColors.red,
@@ -115,7 +117,6 @@ class _OPlayerScore extends StatelessWidget {
     });
 
     return _ScoreSummary(
-      isSelected: isSelected,
       symbol: ActionType.o.symbol,
       score: score,
       color: GameColors.green,
@@ -128,13 +129,11 @@ class _ScoreSummary extends StatelessWidget {
     required this.symbol,
     required this.score,
     required this.color,
-    this.isSelected,
   });
 
   final String symbol;
   final int score;
   final Color color;
-  final bool? isSelected;
 
   @override
   Widget build(BuildContext context) {

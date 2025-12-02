@@ -93,7 +93,7 @@ class _GameBoard extends HookWidget {
         },
       );
       return null;
-    }, [ValueKey(true)]);
+    }, [true]);
 
     return AspectRatio(
       aspectRatio: 1,
@@ -193,7 +193,7 @@ class _AnimatedGridSeparator extends HookWidget {
         animationController.forward();
       });
       return null;
-    }, [ValueKey(true)]);
+    }, [animationController]);
 
     return SizedBox(
       width: 4,
@@ -203,7 +203,7 @@ class _AnimatedGridSeparator extends HookWidget {
           value: animation,
           backgroundColor: Colors.transparent,
           valueColor: AlwaysStoppedAnimation<Color>(
-            Color(0xFF0C0908),
+            Color(0xFF0C0908).withAlpha(180),
           ),
         ),
       ),

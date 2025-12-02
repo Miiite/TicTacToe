@@ -141,6 +141,12 @@ class _GameResultMessage extends HookWidget {
     final controller = useAnimationController(
       duration: _animationDuration,
     );
+    final fadeAnimation = useMemoized(() {
+      return context.fadeAnimation(controller: controller);
+    }, [controller]);
+    final scaleAnimation = useMemoized(() {
+      return context.scaleAnimation(controller: controller);
+    }, [controller]);
 
     useEffect(
       () {
@@ -148,12 +154,12 @@ class _GameResultMessage extends HookWidget {
         return null;
       },
       // Launch the animation only once
-      [ValueKey(true)],
+      [controller],
     );
     return FadeTransition(
-      opacity: context.fadeAnimation(controller: controller),
+      opacity: fadeAnimation,
       child: ScaleTransition(
-        scale: context.scaleAnimation(controller: controller),
+        scale: scaleAnimation,
         child: Column(
           children: [
             _Icon(winnerColor: winnerColor, isDraw: isDraw),
