@@ -16,8 +16,10 @@ class ResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GameCubit, GameState>(
-      buildWhen: (previous, current) =>
-          current.maybeMap(result: (value) => true, orElse: () => false),
+      buildWhen: (previous, current) => current.maybeMap(
+        result: (value) => true,
+        orElse: () => false,
+      ),
       builder: (context, state) {
         return Scaffold(
           body: _ConfettiCanon(
@@ -29,14 +31,13 @@ class ResultScreen extends StatelessWidget {
                 child: Center(
                   child: Column(
                     mainAxisAlignment: .center,
+                    spacing: 60,
                     children: [
                       _GameResultMessage(),
-                      const SizedBox(height: 60),
                       AnimatedScoreSummary(
                         duration: _animationDuration,
                         backgroundColor: Colors.white.withAlpha(13),
                       ),
-                      const SizedBox(height: 60),
                       _ActionButtons(),
                     ],
                   ),
@@ -124,11 +125,12 @@ class _GameResultMessage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.read<GameCubit>().state;
-    final (isXWinner, isOWinner, isDraw) = state.maybeMap(
-      result: (value) => (value.isXWinner, value.isOWinner, value.isDraw),
-      orElse: () => (false, false, false),
-    );
+    final (isXWinner, isOWinner, isDraw) = context.select((GameCubit cubit) {
+      return cubit.state.maybeMap(
+        result: (value) => (value.isXWinner, value.isOWinner, value.isDraw),
+        orElse: () => (false, false, false),
+      );
+    });
 
     final winnerColor = isXWinner
         ? GameColors.red
@@ -145,7 +147,8 @@ class _GameResultMessage extends HookWidget {
         controller.forward();
         return null;
       },
-      [],
+      // Launch the animation only once
+      [ValueKey(true)],
     );
     return FadeTransition(
       opacity: context.fadeAnimation(controller: controller),
@@ -158,7 +161,10 @@ class _GameResultMessage extends HookWidget {
             _Text(isDraw: isDraw),
             const SizedBox(height: 16),
             if (!isDraw)
-              _WinnerIcon(winnerColor: winnerColor, isXWinner: isXWinner),
+              _WinnerIcon(
+                winnerColor: winnerColor,
+                isXWinner: isXWinner,
+              ),
           ],
         ),
       ),
@@ -185,7 +191,7 @@ class _WinnerIcon extends StatelessWidget {
             winnerColor.withAlpha(50),
           ],
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: .circular(20),
         border: .all(
           color: winnerColor.withAlpha(130),
           width: 2,
@@ -217,7 +223,6 @@ class _WinnerIcon extends StatelessWidget {
 
 class _Text extends StatelessWidget {
   const _Text({
-    super.key,
     required this.isDraw,
   });
 
@@ -248,33 +253,34 @@ class _Icon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 120,
-      height: 120,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: RadialGradient(
-          colors: [
-            winnerColor.withAlpha(50),
-            winnerColor.withAlpha(13),
+    return SizedBox.square(
+      dimension: 120,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(
+            colors: [
+              winnerColor.withAlpha(50),
+              winnerColor.withAlpha(13),
+            ],
+          ),
+          border: .all(
+            color: winnerColor.withAlpha(100),
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: winnerColor.withAlpha(75),
+              blurRadius: 30,
+              spreadRadius: 5,
+            ),
           ],
         ),
-        border: .all(
-          color: winnerColor.withAlpha(100),
-          width: 2,
+        child: Icon(
+          isDraw ? Icons.handshake_rounded : Icons.emoji_events_rounded,
+          size: 60,
+          color: winnerColor,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: winnerColor.withAlpha(75),
-            blurRadius: 30,
-            spreadRadius: 5,
-          ),
-        ],
-      ),
-      child: Icon(
-        isDraw ? Icons.handshake_rounded : Icons.emoji_events_rounded,
-        size: 60,
-        color: winnerColor,
       ),
     );
   }
