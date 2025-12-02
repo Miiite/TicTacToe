@@ -27,7 +27,8 @@ class AnimatedScoreSummary extends HookWidget {
         controller.forward();
         return null;
       },
-      [],
+      // Make sure this callback is called only once
+      [ValueKey(true)],
     );
 
     return FadeTransition(
@@ -37,7 +38,7 @@ class AnimatedScoreSummary extends HookWidget {
         margin: const .symmetric(horizontal: 48),
         decoration: BoxDecoration(
           color: backgroundColor ?? Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: .circular(20),
           border: .all(
             color: (backgroundColor ?? Colors.white).withAlpha(25),
           ),
@@ -47,7 +48,6 @@ class AnimatedScoreSummary extends HookWidget {
           children: [
             _XPlayerScore(),
             SizedBox(
-              width: 1,
               height: 50,
               child: VerticalDivider(
                 color: Colors.white.withAlpha(50),
@@ -110,6 +110,7 @@ class _ScoreSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 4,
       children: [
         Text(
           symbol,
@@ -119,9 +120,8 @@ class _ScoreSummary extends StatelessWidget {
             color: color,
           ),
         ),
-        const SizedBox(height: 4),
         Text(
-          '$score',
+          score.toString(),
           style: TextStyle(
             fontSize: 28,
             fontWeight: .w600,

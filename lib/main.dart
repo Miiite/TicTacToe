@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tictactoe/bloc/game_cubit.dart';
 import 'package:tictactoe/navigation/app_router.dart';
 import 'package:tictactoe/navigation/game_cubit_navigation_listener.dart';
+import 'package:tictactoe/services/user_feedback_service.dart';
 import 'package:tictactoe/utils/game_colors.dart';
-
-import 'services/sound_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
 
   await UserFeedbackService().initialize();
 
@@ -24,7 +28,7 @@ class TicTacToeApp extends StatelessWidget {
       create: (context) => GameCubit(),
       child: MaterialApp.router(
         title: 'Tic Tac Toe',
-        debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: true,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
             seedColor: GameColors.green,

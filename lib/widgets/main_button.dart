@@ -16,11 +16,7 @@ class MainButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const .symmetric(
-          horizontal: 48,
-          vertical: 16,
-        ),
+      child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [
@@ -39,33 +35,39 @@ class MainButton extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon case final icon?)
-              Icon(
-                icon,
-                color: Colors.white,
-                size: 24,
+        child: Padding(
+          padding: const .symmetric(
+            horizontal: 48,
+            vertical: 16,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 8,
+            children: [
+              if (icon case final icon?)
+                Icon(
+                  icon,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: .w600,
+                  color: Colors.white,
+                  letterSpacing: 2,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withAlpha(50),
+                      offset: const Offset(0, 2),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
               ),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: .w600,
-                color: Colors.white,
-                letterSpacing: 2,
-                shadows: [
-                  Shadow(
-                    color: Colors.black.withAlpha(50),
-                    offset: const Offset(0, 2),
-                    blurRadius: 4,
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
