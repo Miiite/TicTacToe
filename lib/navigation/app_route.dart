@@ -1,15 +1,17 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+typedef AppRouterViewBuilder = Widget Function(BuildContext context, GoRouterState state);
+
 abstract class AppRoute extends GoRoute {
   AppRoute({
     required super.path,
-    required Widget child,
+    required AppRouterViewBuilder viewBuilder,
   }) : super(
          pageBuilder: (context, state) {
            return CustomTransitionPage<void>(
              key: state.pageKey,
-             child: child,
+             child: viewBuilder(context, state),
              transitionDuration: const Duration(milliseconds: 300),
              reverseTransitionDuration: const Duration(milliseconds: 300),
              transitionsBuilder:

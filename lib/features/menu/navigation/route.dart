@@ -5,6 +5,6 @@ class MenuRoute extends AppRoute {
   MenuRoute()
     : super(
         path: '/',
-        child: const NewGameScreen(),
+        viewBuilder: (_, __) => const NewGameScreen(),
       );
 }

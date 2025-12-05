@@ -5,7 +5,7 @@ class GameRoute extends AppRoute {
   GameRoute()
     : super(
         path: '/$route',
-        child: const GameScreen(),
+        viewBuilder: (_, __) => const GameScreen(),
       );
 
   static String get route => 'game';

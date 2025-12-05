@@ -6,7 +6,7 @@ class GameStatusRepository {
     required this.persistenceService,
   });
 
-  final GameStatusPersistenceService persistenceService;
+  final GamePersistenceService persistenceService;
 
   Future<void> saveGameStatus(GameBoard gameBoard) {
     return persistenceService.saveGameStatus(gameBoard);

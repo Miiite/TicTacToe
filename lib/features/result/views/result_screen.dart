@@ -3,8 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:tictactoe/design_system/design_system.dart';
+import 'package:tictactoe/features/game/models/game_result.dart';
+import 'package:tictactoe/features/game/models/game_score.dart';
 import 'package:tictactoe/features/game/navigation/route.dart';
+import 'package:tictactoe/features/game/repositories/game_score_repository.dart';
+import 'package:tictactoe/features/game/services/game_status_persistence_service.dart';
+import 'package:tictactoe/features/game/use_cases/game_score_use_cases.dart';
 import 'package:tictactoe/features/result/blocs/result_cubit.dart';
 import 'package:tictactoe/widgets/animated_score_summary.dart';
 import 'package:tictactoe/widgets/cubit_loader.dart';
@@ -12,12 +18,35 @@ import 'package:tictactoe/widgets/cubit_loader.dart';
 const _animationDuration = Duration(milliseconds: 800);
 
 class ResultScreen extends HookWidget {
-  const ResultScreen({super.key});
+  const ResultScreen({
+    super.key,
+    required this.result,
+  });
+
+  final GameResult? result;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ResultCubit(),
+    return MultiProvider(
+      providers: [
+        Provider(create: (context) => GamePersistenceService()),
+        Provider(
+          create: (context) => GameScoreRepository(
+            persistenceService: context.read(),
+          ),
+        ),
+        Provider(
+          create: (context) => GetGameScoreUseCase(
+            gameScoreRepository: context.read(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => ResultCubit(
+            result: result,
+            getGameScoreUseCase: context.read(),
+          ),
+        ),
+      ],
       child: _Body(),
     );
   }
@@ -66,7 +95,9 @@ class _ConfettiCanon extends HookWidget {
   Widget build(BuildContext context) {
     final isDraw = context.select((ResultCubit cubit) {
       return cubit.state.mapOrNull(
-        success: (value) => value.winner == null,
+        success: (value) => value.result?.mapOrNull(
+          draw: (_) => true,
+        ),
       );
     });
     final confettiOptions = useMemoized(() {
@@ -175,16 +206,19 @@ class _AnimatedScoreSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (xscore, oscore) = context.select((ResultCubit cubit) {
-      final state = cubit.state.mapOrNull(success: (value) => value);
-      return (state?.xPlayer.score, state?.oPlayer.score);
+    final score = context.select((ResultCubit cubit) {
+      return cubit.state.mapOrNull(success: (value) => value.score);
     });
 
     return AnimatedScoreSummary(
       duration: _animationDuration,
       backgroundColor: Colors.white.withAlpha(13),
-      xPlayerScore: xscore ?? 0,
-      oPlayerScore: oscore ?? 0,
+      gameScore:
+          score ??
+          GameScore(
+            playerXScore: 0,
+            playerOScore: 0,
+          ),
     );
   }
 }

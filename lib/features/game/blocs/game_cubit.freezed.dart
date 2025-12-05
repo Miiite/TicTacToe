@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$GameState {
 
- GameBoard get board; Player get xPlayer; Player get oPlayer; Player? get playing; GameResultState? get result;
+ GameBoard get board; Player get xPlayer; Player get oPlayer; Player? get playing; GameResult? get result;
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,11 +45,11 @@ abstract mixin class $GameStateCopyWith<$Res>  {
   factory $GameStateCopyWith(GameState value, $Res Function(GameState) _then) = _$GameStateCopyWithImpl;
 @useResult
 $Res call({
- GameBoard board, Player xPlayer, Player oPlayer, Player? playing, GameResultState? result
+ GameBoard board, Player xPlayer, Player oPlayer, Player? playing, GameResult? result
 });
 
 
-$PlayerCopyWith<$Res> get xPlayer;$PlayerCopyWith<$Res> get oPlayer;$PlayerCopyWith<$Res>? get playing;$GameResultStateCopyWith<$Res>? get result;
+$PlayerCopyWith<$Res> get xPlayer;$PlayerCopyWith<$Res> get oPlayer;$PlayerCopyWith<$Res>? get playing;$GameResultCopyWith<$Res>? get result;
 
 }
 /// @nodoc
@@ -69,7 +69,7 @@ as GameBoard,xPlayer: null == xPlayer ? _self.xPlayer : xPlayer // ignore: cast_
 as Player,oPlayer: null == oPlayer ? _self.oPlayer : oPlayer // ignore: cast_nullable_to_non_nullable
 as Player,playing: freezed == playing ? _self.playing : playing // ignore: cast_nullable_to_non_nullable
 as Player?,result: freezed == result ? _self.result : result // ignore: cast_nullable_to_non_nullable
-as GameResultState?,
+as GameResult?,
   ));
 }
 /// Create a copy of GameState
@@ -106,12 +106,12 @@ $PlayerCopyWith<$Res>? get playing {
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$GameResultStateCopyWith<$Res>? get result {
+$GameResultCopyWith<$Res>? get result {
     if (_self.result == null) {
     return null;
   }
 
-  return $GameResultStateCopyWith<$Res>(_self.result!, (value) {
+  return $GameResultCopyWith<$Res>(_self.result!, (value) {
     return _then(_self.copyWith(result: value));
   });
 }
@@ -193,7 +193,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( GameBoard board,  Player xPlayer,  Player oPlayer,  Player? playing,  GameResultState? result)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( GameBoard board,  Player xPlayer,  Player oPlayer,  Player? playing,  GameResult? result)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Game() when $default != null:
 return $default(_that.board,_that.xPlayer,_that.oPlayer,_that.playing,_that.result);case _:
@@ -214,7 +214,7 @@ return $default(_that.board,_that.xPlayer,_that.oPlayer,_that.playing,_that.resu
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( GameBoard board,  Player xPlayer,  Player oPlayer,  Player? playing,  GameResultState? result)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( GameBoard board,  Player xPlayer,  Player oPlayer,  Player? playing,  GameResult? result)  $default,) {final _that = this;
 switch (_that) {
 case _Game():
 return $default(_that.board,_that.xPlayer,_that.oPlayer,_that.playing,_that.result);}
@@ -231,7 +231,7 @@ return $default(_that.board,_that.xPlayer,_that.oPlayer,_that.playing,_that.resu
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( GameBoard board,  Player xPlayer,  Player oPlayer,  Player? playing,  GameResultState? result)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( GameBoard board,  Player xPlayer,  Player oPlayer,  Player? playing,  GameResult? result)?  $default,) {final _that = this;
 switch (_that) {
 case _Game() when $default != null:
 return $default(_that.board,_that.xPlayer,_that.oPlayer,_that.playing,_that.result);case _:
@@ -259,7 +259,7 @@ class _Game implements GameState {
 @override final  Player xPlayer;
 @override final  Player oPlayer;
 @override final  Player? playing;
-@override final  GameResultState? result;
+@override final  GameResult? result;
 
 /// Create a copy of GameState
 /// with the given fields replaced by the non-null parameter values.
@@ -291,11 +291,11 @@ abstract mixin class _$GameCopyWith<$Res> implements $GameStateCopyWith<$Res> {
   factory _$GameCopyWith(_Game value, $Res Function(_Game) _then) = __$GameCopyWithImpl;
 @override @useResult
 $Res call({
- GameBoard board, Player xPlayer, Player oPlayer, Player? playing, GameResultState? result
+ GameBoard board, Player xPlayer, Player oPlayer, Player? playing, GameResult? result
 });
 
 
-@override $PlayerCopyWith<$Res> get xPlayer;@override $PlayerCopyWith<$Res> get oPlayer;@override $PlayerCopyWith<$Res>? get playing;@override $GameResultStateCopyWith<$Res>? get result;
+@override $PlayerCopyWith<$Res> get xPlayer;@override $PlayerCopyWith<$Res> get oPlayer;@override $PlayerCopyWith<$Res>? get playing;@override $GameResultCopyWith<$Res>? get result;
 
 }
 /// @nodoc
@@ -315,7 +315,7 @@ as GameBoard,xPlayer: null == xPlayer ? _self.xPlayer : xPlayer // ignore: cast_
 as Player,oPlayer: null == oPlayer ? _self.oPlayer : oPlayer // ignore: cast_nullable_to_non_nullable
 as Player,playing: freezed == playing ? _self.playing : playing // ignore: cast_nullable_to_non_nullable
 as Player?,result: freezed == result ? _self.result : result // ignore: cast_nullable_to_non_nullable
-as GameResultState?,
+as GameResult?,
   ));
 }
 
@@ -353,286 +353,13 @@ $PlayerCopyWith<$Res>? get playing {
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$GameResultStateCopyWith<$Res>? get result {
+$GameResultCopyWith<$Res>? get result {
     if (_self.result == null) {
     return null;
   }
 
-  return $GameResultStateCopyWith<$Res>(_self.result!, (value) {
+  return $GameResultCopyWith<$Res>(_self.result!, (value) {
     return _then(_self.copyWith(result: value));
-  });
-}
-}
-
-/// @nodoc
-mixin _$GameResultState {
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GameResultState);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'GameResultState()';
-}
-
-
-}
-
-/// @nodoc
-class $GameResultStateCopyWith<$Res>  {
-$GameResultStateCopyWith(GameResultState _, $Res Function(GameResultState) __);
-}
-
-
-/// Adds pattern-matching-related methods to [GameResultState].
-extension GameResultStatePatterns on GameResultState {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Draw value)?  draw,TResult Function( _Winner value)?  winner,required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case _Draw() when draw != null:
-return draw(_that);case _Winner() when winner != null:
-return winner(_that);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Draw value)  draw,required TResult Function( _Winner value)  winner,}){
-final _that = this;
-switch (_that) {
-case _Draw():
-return draw(_that);case _Winner():
-return winner(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Draw value)?  draw,TResult? Function( _Winner value)?  winner,}){
-final _that = this;
-switch (_that) {
-case _Draw() when draw != null:
-return draw(_that);case _Winner() when winner != null:
-return winner(_that);case _:
-  return null;
-
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  draw,TResult Function( Player winner)?  winner,required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case _Draw() when draw != null:
-return draw();case _Winner() when winner != null:
-return winner(_that.winner);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  draw,required TResult Function( Player winner)  winner,}) {final _that = this;
-switch (_that) {
-case _Draw():
-return draw();case _Winner():
-return winner(_that.winner);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  draw,TResult? Function( Player winner)?  winner,}) {final _that = this;
-switch (_that) {
-case _Draw() when draw != null:
-return draw();case _Winner() when winner != null:
-return winner(_that.winner);case _:
-  return null;
-
-}
-}
-
-}
-
-/// @nodoc
-
-
-class _Draw implements GameResultState {
-   _Draw();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Draw);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'GameResultState.draw()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class _Winner implements GameResultState {
-   _Winner({required this.winner});
-  
-
- final  Player winner;
-
-/// Create a copy of GameResultState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$WinnerCopyWith<_Winner> get copyWith => __$WinnerCopyWithImpl<_Winner>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Winner&&(identical(other.winner, winner) || other.winner == winner));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,winner);
-
-@override
-String toString() {
-  return 'GameResultState.winner(winner: $winner)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$WinnerCopyWith<$Res> implements $GameResultStateCopyWith<$Res> {
-  factory _$WinnerCopyWith(_Winner value, $Res Function(_Winner) _then) = __$WinnerCopyWithImpl;
-@useResult
-$Res call({
- Player winner
-});
-
-
-$PlayerCopyWith<$Res> get winner;
-
-}
-/// @nodoc
-class __$WinnerCopyWithImpl<$Res>
-    implements _$WinnerCopyWith<$Res> {
-  __$WinnerCopyWithImpl(this._self, this._then);
-
-  final _Winner _self;
-  final $Res Function(_Winner) _then;
-
-/// Create a copy of GameResultState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? winner = null,}) {
-  return _then(_Winner(
-winner: null == winner ? _self.winner : winner // ignore: cast_nullable_to_non_nullable
-as Player,
-  ));
-}
-
-/// Create a copy of GameResultState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$PlayerCopyWith<$Res> get winner {
-  
-  return $PlayerCopyWith<$Res>(_self.winner, (value) {
-    return _then(_self.copyWith(winner: value));
   });
 }
 }

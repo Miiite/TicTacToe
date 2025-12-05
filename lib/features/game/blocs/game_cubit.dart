@@ -2,7 +2,10 @@ import 'dart:math';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:tictactoe/features/game/models/game_board.dart';
+import 'package:tictactoe/features/game/models/game_result.dart';
+import 'package:tictactoe/features/game/models/game_score.dart';
 import 'package:tictactoe/features/game/models/player.dart';
+import 'package:tictactoe/features/game/use_cases/game_score_use_cases.dart';
 import 'package:tictactoe/features/game/use_cases/game_status_use_cases.dart';
 import 'package:tictactoe/widgets/cubit_loader.dart';
 
@@ -12,6 +15,8 @@ class GameCubit extends LoadableCubit<GameState> {
   GameCubit({
     required this.saveGameStatusUseCase,
     required this.getLatestGameStatusUseCase,
+    required this.saveGameScoreUseCase,
+    required this.getGameScoreUseCase,
   }) : super(
          initialState: GameState(
            xPlayer: Player(type: ActionType.x),
@@ -40,15 +45,24 @@ class GameCubit extends LoadableCubit<GameState> {
 
   final SaveGameStatusUseCase saveGameStatusUseCase;
   final GetLatestGameStatusUseCase getLatestGameStatusUseCase;
+  final SaveGameScoreUseCase saveGameScoreUseCase;
+  final GetGameScoreUseCase getGameScoreUseCase;
 
   @override
   Future<void> load() async {
-    // TODO: Load latest game state
-
     newGameRound();
+
+    final gameScore = await getGameScoreUseCase();
+
+    emit(
+      state.copyWith(
+        oPlayer: state.oPlayer.copyWith(score: gameScore?.playerOScore ?? 0),
+        xPlayer: state.xPlayer.copyWith(score: gameScore?.playerXScore ?? 0),
+      ),
+    );
   }
 
-  void selectCell(int index) {
+  Future<void> selectCell(int index) async {
     final newState = state.selectCell(index);
     final winnerType = newState.getWinnerType();
 
@@ -63,9 +77,16 @@ class GameCubit extends LoadableCubit<GameState> {
         ),
       );
 
+      await saveGameScoreUseCase(
+        GameScore(
+          playerXScore: stateWithUpdatedScore.xPlayer.score,
+          playerOScore: stateWithUpdatedScore.oPlayer.score,
+        ),
+      );
+
       emit(
         stateWithUpdatedScore.copyWith(
-          result: GameResultState.winner(
+          result: GameResult.winner(
             winner: winnerType == ActionType.x
                 ? stateWithUpdatedScore.xPlayer
                 : stateWithUpdatedScore.oPlayer,
@@ -79,7 +100,7 @@ class GameCubit extends LoadableCubit<GameState> {
     if (newState.isDraw) {
       emit(
         state.copyWith(
-          result: GameResultState.draw(),
+          result: GameResult.draw(),
         ),
       );
 
@@ -109,16 +130,8 @@ sealed class GameState with _$GameState {
     required Player xPlayer,
     required Player oPlayer,
     Player? playing,
-    GameResultState? result,
+    GameResult? result,
   }) = _Game;
-}
-
-@freezed
-class GameResultState with _$GameResultState {
-  factory GameResultState.draw() = _Draw;
-  factory GameResultState.winner({
-    required Player winner,
-  }) = _Winner;
 }
 
 extension on GameState {

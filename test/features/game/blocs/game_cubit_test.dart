@@ -1,6 +1,9 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:tictactoe/features/game/blocs/game_cubit.dart';
+import 'package:tictactoe/features/game/models/game_result.dart';
+import 'package:tictactoe/features/game/models/game_score.dart';
 import 'package:tictactoe/features/game/models/player.dart';
 
 import '../../../mocks.dart';
@@ -10,10 +13,31 @@ void main() {
   late final oPlayer = Player(type: ActionType.o);
   late MockSaveGameStatusUseCase mockSaveGameStatusUseCase;
   late MockGetLatestGameStatusUseCase mockGetLatestGameStatusUseCase;
+  late MockGetGameScoreUseCase mockGetGameScoreUseCase;
+  late MockSaveGameScoreUseCase mockSaveGameScoreUseCase;
+
+  setUpAll(() {
+    registerFallbackValue(
+      GameScore(
+        playerXScore: 0,
+        playerOScore: 0,
+      ),
+    );
+  });
 
   setUp(() {
     mockSaveGameStatusUseCase = MockSaveGameStatusUseCase();
     mockGetLatestGameStatusUseCase = MockGetLatestGameStatusUseCase();
+    mockGetGameScoreUseCase = MockGetGameScoreUseCase();
+    mockSaveGameScoreUseCase = MockSaveGameScoreUseCase();
+
+    when(
+      () => mockGetGameScoreUseCase(),
+    ).thenAnswer((_) async => GameScore(playerXScore: 0, playerOScore: 0));
+
+    when(
+      () => mockSaveGameScoreUseCase(any<GameScore>()),
+    ).thenAnswer((_) async => Future.value());
   });
 
   group('GameCubit', () {
@@ -23,6 +47,8 @@ void main() {
         final cubit = GameCubit(
           saveGameStatusUseCase: mockSaveGameStatusUseCase,
           getLatestGameStatusUseCase: mockGetLatestGameStatusUseCase,
+          getGameScoreUseCase: mockGetGameScoreUseCase,
+          saveGameScoreUseCase: mockSaveGameScoreUseCase,
         );
 
         await cubit.load();
@@ -49,6 +75,8 @@ void main() {
         build: () => GameCubit(
           saveGameStatusUseCase: mockSaveGameStatusUseCase,
           getLatestGameStatusUseCase: mockGetLatestGameStatusUseCase,
+          getGameScoreUseCase: mockGetGameScoreUseCase,
+          saveGameScoreUseCase: mockSaveGameScoreUseCase,
         ),
         act: (cubit) => cubit.newGameRound(),
         expect: () => [
@@ -65,6 +93,8 @@ void main() {
         build: () => GameCubit(
           saveGameStatusUseCase: mockSaveGameStatusUseCase,
           getLatestGameStatusUseCase: mockGetLatestGameStatusUseCase,
+          getGameScoreUseCase: mockGetGameScoreUseCase,
+          saveGameScoreUseCase: mockSaveGameScoreUseCase,
         ),
         // Seed a state to force the current player's turn
         seed: () => GameState(
@@ -88,6 +118,8 @@ void main() {
         build: () => GameCubit(
           saveGameStatusUseCase: mockSaveGameStatusUseCase,
           getLatestGameStatusUseCase: mockGetLatestGameStatusUseCase,
+          getGameScoreUseCase: mockGetGameScoreUseCase,
+          saveGameScoreUseCase: mockSaveGameScoreUseCase,
         ),
         // Seed the state to force the current player's turn
         seed: () => GameState(
@@ -111,6 +143,8 @@ void main() {
         build: () => GameCubit(
           saveGameStatusUseCase: mockSaveGameStatusUseCase,
           getLatestGameStatusUseCase: mockGetLatestGameStatusUseCase,
+          getGameScoreUseCase: mockGetGameScoreUseCase,
+          saveGameScoreUseCase: mockSaveGameScoreUseCase,
         ),
         // Simulate an already running game state
         seed: () => GameState(

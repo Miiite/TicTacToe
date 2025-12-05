@@ -5,9 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tictactoe/design_system/theme.dart';
 import 'package:tictactoe/features/game/blocs/game_cubit.dart';
+import 'package:tictactoe/features/game/models/game_score.dart';
 import 'package:tictactoe/features/game/models/player.dart';
+import 'package:tictactoe/features/game/repositories/game_score_repository.dart';
 import 'package:tictactoe/features/game/repositories/game_status_repository.dart';
 import 'package:tictactoe/features/game/services/game_status_persistence_service.dart';
+import 'package:tictactoe/features/game/use_cases/game_score_use_cases.dart';
 import 'package:tictactoe/features/game/use_cases/game_status_use_cases.dart';
 import 'package:tictactoe/features/result/navigation/route.dart';
 import 'package:tictactoe/widgets/animated_score_summary.dart';
@@ -40,7 +43,7 @@ class _CubitProvider extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider(create: (context) => GameStatusPersistenceService()),
+        Provider(create: (context) => GamePersistenceService()),
         Provider(
           create: (context) => GameStatusRepository(
             persistenceService: context.read(),
@@ -56,11 +59,28 @@ class _CubitProvider extends StatelessWidget {
             gameStatusRepository: context.read(),
           ),
         ),
+        Provider(
+          create: (context) => GameScoreRepository(
+            persistenceService: context.read(),
+          ),
+        ),
+        Provider(
+          create: (context) => SaveGameScoreUseCase(
+            gameScoreRepository: context.read(),
+          ),
+        ),
+        Provider(
+          create: (context) => GetGameScoreUseCase(
+            gameScoreRepository: context.read(),
+          ),
+        ),
         BlocProvider(
           create: (context) {
             return GameCubit(
               getLatestGameStatusUseCase: context.read(),
               saveGameStatusUseCase: context.read(),
+              saveGameScoreUseCase: context.read(),
+              getGameScoreUseCase: context.read(),
             );
           },
         ),
@@ -82,7 +102,10 @@ class _NavigationListener extends StatelessWidget {
         return current.result != null;
       },
       listener: (context, state) {
-        GoRouter.of(context).go('/${ResultRoute.route}');
+        GoRouter.of(context).go(
+          '/${ResultRoute.route}',
+          extra: state.result,
+        );
       },
       child: child,
     );
@@ -242,15 +265,17 @@ class _AnimatedScoreSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (xscore, oscore) = context.select((GameCubit cubit) {
-      return (cubit.state.xPlayer.score, cubit.state.oPlayer.score);
+    final score = context.select((GameCubit cubit) {
+      return GameScore(
+        playerXScore: cubit.state.xPlayer.score,
+        playerOScore: cubit.state.oPlayer.score,
+      );
     });
 
     return AnimatedScoreSummary(
       duration: .zero,
       backgroundColor: AppTheme.of(context).scoreTileBackgroundColor,
-      xPlayerScore: xscore,
-      oPlayerScore: oscore,
+      gameScore: score,
     );
   }
 }
