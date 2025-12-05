@@ -1,30 +1,41 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:tictactoe/features/game/blocs/game_cubit.dart';
 import 'package:tictactoe/features/game/models/player.dart';
 
-class MockPlayer extends Mock implements Player {}
+import '../../../mocks.dart';
 
 void main() {
   late final xPlayer = Player(type: ActionType.x);
   late final oPlayer = Player(type: ActionType.o);
+  late MockSaveGameStatusUseCase mockSaveGameStatusUseCase;
+  late MockGetLatestGameStatusUseCase mockGetLatestGameStatusUseCase;
+
+  setUp(() {
+    mockSaveGameStatusUseCase = MockSaveGameStatusUseCase();
+    mockGetLatestGameStatusUseCase = MockGetLatestGameStatusUseCase();
+  });
 
   group('GameCubit', () {
     test(
       'When creating the gameCubit it should be in an initial state by default',
-      () {
-        final cubit = GameCubit();
+      () async {
+        final cubit = GameCubit(
+          saveGameStatusUseCase: mockSaveGameStatusUseCase,
+          getLatestGameStatusUseCase: mockGetLatestGameStatusUseCase,
+        );
+
+        await cubit.load();
         expect(
           cubit.state,
           isA<GameState>()
               .having(
-                (s) => s.mapOrNull(initial: (i) => i.xPlayer.type),
+                (s) => s.xPlayer.type,
                 'xPlayer',
                 (p) => p == ActionType.x,
               )
               .having(
-                (s) => s.mapOrNull(initial: (i) => i.oPlayer.type),
+                (s) => s.oPlayer.type,
                 'oPlayer',
                 (p) => p == ActionType.o,
               ),
@@ -35,11 +46,14 @@ void main() {
     group('Game logic', () {
       blocTest<GameCubit, GameState>(
         'Starting a new game round should properly reset the grid',
-        build: () => GameCubit(),
+        build: () => GameCubit(
+          saveGameStatusUseCase: mockSaveGameStatusUseCase,
+          getLatestGameStatusUseCase: mockGetLatestGameStatusUseCase,
+        ),
         act: (cubit) => cubit.newGameRound(),
         expect: () => [
           isA<GameState>().having(
-            (s) => s.mapOrNull(game: (g) => g.board),
+            (s) => s.board,
             'board',
             (List<ActionType?> board) => board.every((cell) => cell == null),
           ),
@@ -47,17 +61,13 @@ void main() {
       );
 
       blocTest<GameCubit, GameState>(
-        'Cannot select a cell, until the game has actually started',
-        build: () => GameCubit(),
-        act: (cubit) => cubit.selectCell(0),
-        expect: () => [],
-      );
-
-      blocTest<GameCubit, GameState>(
         'Selecting a cell should fill it with the current player\'s symbol',
-        build: () => GameCubit(),
+        build: () => GameCubit(
+          saveGameStatusUseCase: mockSaveGameStatusUseCase,
+          getLatestGameStatusUseCase: mockGetLatestGameStatusUseCase,
+        ),
         // Seed a state to force the current player's turn
-        seed: () => GameState.game(
+        seed: () => GameState(
           playing: xPlayer,
           board: List.filled(9, null),
           xPlayer: xPlayer,
@@ -66,7 +76,7 @@ void main() {
         act: (cubit) => cubit.selectCell(0),
         expect: () => [
           isA<GameState>().having(
-            (s) => s.mapOrNull(game: (g) => g.board[0]),
+            (s) => s.board[0],
             'cell 0',
             ActionType.x,
           ),
@@ -75,9 +85,12 @@ void main() {
 
       blocTest<GameCubit, GameState>(
         'Selecting a cell should switch the turn to the other player',
-        build: () => GameCubit(),
+        build: () => GameCubit(
+          saveGameStatusUseCase: mockSaveGameStatusUseCase,
+          getLatestGameStatusUseCase: mockGetLatestGameStatusUseCase,
+        ),
         // Seed the state to force the current player's turn
-        seed: () => GameState.game(
+        seed: () => GameState(
           playing: xPlayer,
           board: List.filled(9, null),
           xPlayer: xPlayer,
@@ -86,7 +99,7 @@ void main() {
         act: (cubit) => cubit.selectCell(0),
         expect: () => [
           isA<GameState>().having(
-            (s) => s.mapOrNull(game: (g) => g.playing),
+            (s) => s.playing,
             'playing',
             oPlayer,
           ),
@@ -94,30 +107,13 @@ void main() {
       );
 
       blocTest<GameCubit, GameState>(
-        'Creating a new game should reset the cubit\'s state to the initial state',
-        build: () => GameCubit(),
-        // Simulate an already running game state
-        seed: () => GameState.game(
-          playing: xPlayer,
-          board: List.filled(9, null),
-          xPlayer: xPlayer,
-          oPlayer: oPlayer,
-        ),
-        act: (cubit) => cubit.newGame(),
-        expect: () => [
-          isA<GameState>().having(
-            (s) => s.mapOrNull(initial: (i) => true),
-            'initial state',
-            true,
-          ),
-        ],
-      );
-
-      blocTest<GameCubit, GameState>(
         'When a player wins a game, the proper state should be emited',
-        build: () => GameCubit(),
+        build: () => GameCubit(
+          saveGameStatusUseCase: mockSaveGameStatusUseCase,
+          getLatestGameStatusUseCase: mockGetLatestGameStatusUseCase,
+        ),
         // Simulate an already running game state
-        seed: () => GameState.game(
+        seed: () => GameState(
           playing: xPlayer,
           board: <ActionType?>[
             ActionType.x,
@@ -136,9 +132,11 @@ void main() {
         act: (cubit) => cubit.selectCell(2),
         expect: () => [
           isA<GameState>().having(
-            (s) => s.mapOrNull(result: (r) => r.winner),
+            (s) => s.result?.mapOrNull(
+              winner: (w) => (w.winner.type, w.winner.score),
+            ),
             'winner',
-            xPlayer,
+            (xPlayer.type, xPlayer.score + 1),
           ),
         ],
       );

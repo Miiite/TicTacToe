@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tictactoe/design_system/theme.dart';
 import 'package:tictactoe/features/game/blocs/game_cubit.dart';
 import 'package:tictactoe/features/game/models/player.dart';
 import 'package:tictactoe/features/game/repositories/game_status_repository.dart';
 import 'package:tictactoe/features/game/services/game_status_persistence_service.dart';
-import 'package:tictactoe/features/game/use_cases/save_game_status_use_case.dart';
+import 'package:tictactoe/features/game/use_cases/game_status_use_cases.dart';
+import 'package:tictactoe/features/result/navigation/route.dart';
 import 'package:tictactoe/widgets/animated_score_summary.dart';
 import 'package:tictactoe/widgets/cubit_loader.dart';
 import 'package:tictactoe/widgets/game_cell.dart';
@@ -21,7 +23,9 @@ class GameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return _CubitProvider(
       child: CubitLoader<GameCubit, GameState>(
-        child: _Body(),
+        child: _NavigationListener(
+          child: _Body(),
+        ),
       ),
     );
   }
@@ -61,6 +65,25 @@ class _CubitProvider extends StatelessWidget {
           },
         ),
       ],
+      child: child,
+    );
+  }
+}
+
+class _NavigationListener extends StatelessWidget {
+  const _NavigationListener({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<GameCubit, GameState>(
+      listenWhen: (previous, current) {
+        return current.result != null;
+      },
+      listener: (context, state) {
+        GoRouter.of(context).go('/${ResultRoute.route}');
+      },
       child: child,
     );
   }

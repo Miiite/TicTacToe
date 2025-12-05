@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:tictactoe/features/game/models/game_board.dart';
 import 'package:tictactoe/features/game/models/player.dart';
-import 'package:tictactoe/features/game/use_cases/save_game_status_use_case.dart';
+import 'package:tictactoe/features/game/use_cases/game_status_use_cases.dart';
 import 'package:tictactoe/widgets/cubit_loader.dart';
 
 part 'game_cubit.freezed.dart';
