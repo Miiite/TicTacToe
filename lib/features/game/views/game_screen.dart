@@ -8,10 +8,8 @@ import 'package:tictactoe/features/game/blocs/game_cubit.dart';
 import 'package:tictactoe/features/game/models/game_score.dart';
 import 'package:tictactoe/features/game/models/player.dart';
 import 'package:tictactoe/features/game/repositories/game_score_repository.dart';
-import 'package:tictactoe/features/game/repositories/game_status_repository.dart';
 import 'package:tictactoe/features/game/services/game_status_persistence_service.dart';
 import 'package:tictactoe/features/game/use_cases/game_score_use_cases.dart';
-import 'package:tictactoe/features/game/use_cases/game_status_use_cases.dart';
 import 'package:tictactoe/features/result/navigation/route.dart';
 import 'package:tictactoe/widgets/animated_score_summary.dart';
 import 'package:tictactoe/widgets/cubit_loader.dart';
@@ -45,21 +43,6 @@ class _CubitProvider extends StatelessWidget {
       providers: [
         Provider(create: (context) => GamePersistenceService()),
         Provider(
-          create: (context) => GameStatusRepository(
-            persistenceService: context.read(),
-          ),
-        ),
-        Provider(
-          create: (context) => GetLatestGameStatusUseCase(
-            gameStatusRepository: context.read(),
-          ),
-        ),
-        Provider(
-          create: (context) => SaveGameStatusUseCase(
-            gameStatusRepository: context.read(),
-          ),
-        ),
-        Provider(
           create: (context) => GameScoreRepository(
             persistenceService: context.read(),
           ),
@@ -77,8 +60,6 @@ class _CubitProvider extends StatelessWidget {
         BlocProvider(
           create: (context) {
             return GameCubit(
-              getLatestGameStatusUseCase: context.read(),
-              saveGameStatusUseCase: context.read(),
               saveGameScoreUseCase: context.read(),
               getGameScoreUseCase: context.read(),
             );

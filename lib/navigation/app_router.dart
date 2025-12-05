@@ -8,7 +8,9 @@ class AppRouter {
     initialLocation: '/',
     routes: [
       MenuRoute(),
-      GameRoute(),
+      GameRoute(
+        
+      ),
       ResultRoute(),
     ],    
   );

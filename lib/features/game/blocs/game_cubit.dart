@@ -6,15 +6,12 @@ import 'package:tictactoe/features/game/models/game_result.dart';
 import 'package:tictactoe/features/game/models/game_score.dart';
 import 'package:tictactoe/features/game/models/player.dart';
 import 'package:tictactoe/features/game/use_cases/game_score_use_cases.dart';
-import 'package:tictactoe/features/game/use_cases/game_status_use_cases.dart';
 import 'package:tictactoe/widgets/cubit_loader.dart';
 
 part 'game_cubit.freezed.dart';
 
 class GameCubit extends LoadableCubit<GameState> {
   GameCubit({
-    required this.saveGameStatusUseCase,
-    required this.getLatestGameStatusUseCase,
     required this.saveGameScoreUseCase,
     required this.getGameScoreUseCase,
   }) : super(
@@ -43,8 +40,6 @@ class GameCubit extends LoadableCubit<GameState> {
 
   final random = Random();
 
-  final SaveGameStatusUseCase saveGameStatusUseCase;
-  final GetLatestGameStatusUseCase getLatestGameStatusUseCase;
   final SaveGameScoreUseCase saveGameScoreUseCase;
   final GetGameScoreUseCase getGameScoreUseCase;
 
@@ -165,12 +160,13 @@ extension on GameState {
 
   GameState nextTurn() {
     final localPlaying = playing;
+
     if (localPlaying == null) {
       return this;
     }
 
     return copyWith(
-      playing: playing == xPlayer ? oPlayer : xPlayer,
+      playing: localPlaying.type == xPlayer.type ? oPlayer : xPlayer,
     );
   }
 }
