@@ -1,4 +1,5 @@
 # Environment
+
 !!!
 Project uses Flutter 3.38.3 and Dart 3.10.0 (used to be able to enable dot shorthands feature)
 !!!
@@ -20,6 +21,45 @@ https://github.com/user-attachments/assets/db229b96-fbca-4914-9996-989e9884432b
 - [freezed](https://pub.dev/packages/freezed) for models
 - [flutter_confetti](https://pub.dev/packages/flutter_confetti) for ... fun ?
 
+# Architecture
+
+```mermaid
+block-beta
+  columns 4
+
+  block:layers:3
+    columns 1
+    P["Widgets/Screens"]
+    space
+    C["Cubits"]
+    space
+    U["Use Cases"]
+    space
+    R["Repositories"]
+    space
+    D["Data Sources"]
+  end
+
+  block:models:2
+    columns 1
+    M["Models (Entities & Data Models)"]:1
+  end
+
+  P --> C
+  C --> U
+  U --> R
+  R --> D
+```
+
+**Explanation:**
+
+- **Presentation Layer:** Flutter UI (Widgets/Screen) handle user input and display state.
+- **Bloc/Cubit:** Handle screens state management, and interaction with the domain layer.
+- **Use Cases:** Encapsulate the application-specific business logic and is responsible of data aggregation accross repositories.
+- **Repositories:** Layer to query and/or persist data. Is responsible of aggregating data inside its domain.
+- **Data Sources:** The source of data (local storage, APIs, etc).
+
+Arrows show the direction of dependency. Each layer depends only on the layer directly below it.
 
 # Initial prompt (used to generate the project skeleton prior to manual editions)
 

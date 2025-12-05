@@ -11,7 +11,7 @@ import 'package:tictactoe/features/game/models/game_score.dart';
 import 'package:tictactoe/features/game/models/player.dart';
 import 'package:tictactoe/features/game/navigation/route.dart';
 import 'package:tictactoe/features/game/repositories/game_score_repository.dart';
-import 'package:tictactoe/features/game/services/game_status_persistence_service.dart';
+import 'package:tictactoe/features/game/sources/game_score_persistence_service.dart';
 import 'package:tictactoe/features/game/use_cases/game_score_use_cases.dart';
 import 'package:tictactoe/features/result/blocs/result_cubit.dart';
 import 'package:tictactoe/widgets/animated_score_summary.dart';
@@ -31,7 +31,7 @@ class ResultScreen extends HookWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider(create: (context) => GamePersistenceService()),
+        Provider(create: (context) => GameScorePersistenceService()),
         Provider(
           create: (context) => GameScoreRepository(
             persistenceService: context.read(),
