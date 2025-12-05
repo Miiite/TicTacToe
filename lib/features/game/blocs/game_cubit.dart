@@ -1,23 +1,27 @@
 import 'dart:math';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:tictactoe/features/game/models/game_board.dart';
 import 'package:tictactoe/features/game/models/player.dart';
+import 'package:tictactoe/features/game/use_cases/save_game_status_use_case.dart';
+import 'package:tictactoe/widgets/cubit_loader.dart';
 
 part 'game_cubit.freezed.dart';
 
-typedef GameBoard = List<ActionType?>;
-
-class GameCubit extends Cubit<GameState> {
-  GameCubit()
-    : super(
-        GameState.initial(
-          xPlayer: Player(type: ActionType.x),
-          oPlayer: Player(type: ActionType.o),
-        ),
-      );
+class GameCubit extends LoadableCubit<GameState> {
+  GameCubit({
+    required this.saveGameStatusUseCase,
+    required this.getLatestGameStatusUseCase,
+  }) : super(
+         initialState: GameState(
+           xPlayer: Player(type: ActionType.x),
+           oPlayer: Player(type: ActionType.o),
+           board: _emptyBoard,
+         ),
+       );
 
   static const int gridSize = 9;
+  static final List<ActionType?> _emptyBoard = List.filled(gridSize, null);
 
   // OK for small grid sizes, but should be dynamic if we were to make
   // a bigger titactoe board game.
@@ -34,68 +38,65 @@ class GameCubit extends Cubit<GameState> {
 
   final random = Random();
 
+  final SaveGameStatusUseCase saveGameStatusUseCase;
+  final GetLatestGameStatusUseCase getLatestGameStatusUseCase;
+
+  @override
+  Future<void> load() async {
+    // TODO: Load latest game state
+
+    newGameRound();
+  }
+
   void selectCell(int index) {
-    state.mapOrNull(
-      game: ((game) {
-        final newState = game.selectCell(index);
-        final winnerType = newState.getWinnerType();
+    final newState = state.selectCell(index);
+    final winnerType = newState.getWinnerType();
 
-        // Game is over and has a winner
-        if (winnerType != null) {
-          emit(
-            GameState.result(
-              board: newState.board,
-              oPlayer: state.oPlayer.copyWith(
-                score:
-                    state.oPlayer.score + (winnerType == ActionType.o ? 1 : 0),
-              ),
-              xPlayer: state.xPlayer.copyWith(
-                score:
-                    state.xPlayer.score + (winnerType == ActionType.x ? 1 : 0),
-              ),
-              winner: winnerType == state.xPlayer.type
-                  ? state.xPlayer
-                  : state.oPlayer,
-            ),
-          );
-          return;
-        }
+    // Game is over and has a winner
+    if (winnerType != null) {
+      final stateWithUpdatedScore = state.copyWith(
+        oPlayer: state.oPlayer.copyWith(
+          score: state.oPlayer.score + (winnerType == ActionType.o ? 1 : 0),
+        ),
+        xPlayer: state.xPlayer.copyWith(
+          score: state.xPlayer.score + (winnerType == ActionType.x ? 1 : 0),
+        ),
+      );
 
-        // Game is over and is a draw
-        if (newState.isDraw) {
-          emit(
-            GameState.result(
-              oPlayer: state.oPlayer,
-              xPlayer: state.xPlayer,
-              board: newState.board,
-            ),
-          );
+      emit(
+        stateWithUpdatedScore.copyWith(
+          result: GameResultState.winner(
+            winner: winnerType == ActionType.x
+                ? stateWithUpdatedScore.xPlayer
+                : stateWithUpdatedScore.oPlayer,
+          ),
+        ),
+      );
+      return;
+    }
 
-          return;
-        }
+    // Game is over and is a draw
+    if (newState.isDraw) {
+      emit(
+        state.copyWith(
+          result: GameResultState.draw(),
+        ),
+      );
 
-        // Game is not over yet
-        emit(newState.nextTurn());
-      }),
-    );
+      return;
+    }
+
+    // Game is not over yet
+    emit(newState.nextTurn());
   }
 
   void newGameRound() {
     emit(
-      GameState.game(
+      GameState(
         playing: random.nextBool() ? state.xPlayer : state.oPlayer,
-        board: List.filled(gridSize, null),
+        board: _emptyBoard,
         oPlayer: state.oPlayer,
         xPlayer: state.xPlayer,
-      ),
-    );
-  }
-
-  void newGame() {
-    emit(
-      GameState.initial(
-        xPlayer: state.xPlayer,
-        oPlayer: state.oPlayer,
       ),
     );
   }
@@ -103,31 +104,24 @@ class GameCubit extends Cubit<GameState> {
 
 @freezed
 sealed class GameState with _$GameState {
-  factory GameState.initial({
-    required Player xPlayer,
-    required Player oPlayer,
-  }) = _Initial;
-  factory GameState.game({
-    required Player playing,
+  factory GameState({
     required GameBoard board,
     required Player xPlayer,
     required Player oPlayer,
+    Player? playing,
+    GameResultState? result,
   }) = _Game;
-  factory GameState.result({
-    Player? winner,
-    required Player xPlayer,
-    required Player oPlayer,
-    required GameBoard board,
-  }) = Result;
 }
 
-extension ResultExtensions on Result {
-  bool get isXWinner => winner?.type == ActionType.x;
-  bool get isOWinner => winner?.type == ActionType.o;
-  bool get isDraw => winner == null;
+@freezed
+class GameResultState with _$GameResultState {
+  factory GameResultState.draw() = _Draw;
+  factory GameResultState.winner({
+    required Player winner,
+  }) = _Winner;
 }
 
-extension on _Game {
+extension on GameState {
   bool get isDraw {
     return board.every((cell) => cell != null);
   }
@@ -145,11 +139,25 @@ extension on _Game {
     return null;
   }
 
-  _Game selectCell(int index) => copyWith(
-    board: List.from(board)..[index] = playing.type,
-  );
+  GameState selectCell(int index) {
+    final localPlaying = playing;
+    if (localPlaying == null) {
+      return this;
+    }
 
-  _Game nextTurn() => copyWith(
-    playing: playing == xPlayer ? oPlayer : xPlayer,
-  );
+    return copyWith(
+      board: List.from(board)..[index] = localPlaying.type,
+    );
+  }
+
+  GameState nextTurn() {
+    final localPlaying = playing;
+    if (localPlaying == null) {
+      return this;
+    }
+
+    return copyWith(
+      playing: playing == xPlayer ? oPlayer : xPlayer,
+    );
+  }
 }

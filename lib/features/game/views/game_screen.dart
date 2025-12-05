@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:provider/provider.dart';
 import 'package:tictactoe/design_system/theme.dart';
 import 'package:tictactoe/features/game/blocs/game_cubit.dart';
 import 'package:tictactoe/features/game/models/player.dart';
+import 'package:tictactoe/features/game/repositories/game_status_repository.dart';
+import 'package:tictactoe/features/game/services/game_status_persistence_service.dart';
+import 'package:tictactoe/features/game/use_cases/save_game_status_use_case.dart';
 import 'package:tictactoe/widgets/animated_score_summary.dart';
+import 'package:tictactoe/widgets/cubit_loader.dart';
 import 'package:tictactoe/widgets/game_cell.dart';
 
 const _animationDuration = Duration(milliseconds: 300);
@@ -14,17 +19,65 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return _CubitProvider(
+      child: CubitLoader<GameCubit, GameState>(
+        child: _Body(),
+      ),
+    );
+  }
+}
+
+class _CubitProvider extends StatelessWidget {
+  const _CubitProvider({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        Provider(create: (context) => GameStatusPersistenceService()),
+        Provider(
+          create: (context) => GameStatusRepository(
+            persistenceService: context.read(),
+          ),
+        ),
+        Provider(
+          create: (context) => GetLatestGameStatusUseCase(
+            gameStatusRepository: context.read(),
+          ),
+        ),
+        Provider(
+          create: (context) => SaveGameStatusUseCase(
+            gameStatusRepository: context.read(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) {
+            return GameCubit(
+              getLatestGameStatusUseCase: context.read(),
+              saveGameStatusUseCase: context.read(),
+            );
+          },
+        ),
+      ],
+      child: child,
+    );
+  }
+}
+
+class _Body extends StatelessWidget {
+  const _Body();
+
+  @override
+  Widget build(BuildContext context) {
     final theme = AppTheme.of(context);
     final backgroundGradient = context.select((GameCubit cubit) {
-      return cubit.state.maybeMap(
-        game: (value) {
-          return switch (value.playing.type) {
-            ActionType.x => theme.redGradient,
-            ActionType.o => theme.greenGradient,
-          };
-        },
-        orElse: () => theme.backgroundGradient,
-      );
+      return switch (cubit.state.playing?.type) {
+        ActionType.x => theme.redGradient,
+        ActionType.o => theme.greenGradient,
+        null => theme.backgroundGradient,
+      };
     });
 
     return Scaffold(
@@ -80,10 +133,7 @@ class _GameBoard extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final gameBoard = context.select((GameCubit cubit) {
-      return cubit.state.mapOrNull(
-        game: (game) => game.board,
-        result: (result) => result.board,
-      );
+      return cubit.state.board;
     });
     final showCells = useState(false);
     useEffect(() {
@@ -121,7 +171,7 @@ class _GameBoard extends HookWidget {
                         padding: const .all(_itemSpacing / 2),
                         child: GameCell(
                           index: index,
-                          playerType: gameBoard?[index],
+                          playerType: gameBoard[index],
                           onTap: showCells.value
                               ? () {
                                   context.read<GameCubit>().selectCell(index);

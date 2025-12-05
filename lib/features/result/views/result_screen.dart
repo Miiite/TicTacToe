@@ -2,54 +2,63 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tictactoe/design_system/design_system.dart';
 import 'package:tictactoe/features/game/blocs/game_cubit.dart';
+import 'package:tictactoe/features/result/blocs/result_cubit.dart';
 import 'package:tictactoe/widgets/animated_score_summary.dart';
+import 'package:tictactoe/widgets/cubit_loader.dart';
 
 const _animationDuration = Duration(milliseconds: 800);
 
-class ResultScreen extends StatelessWidget {
+class ResultScreen extends HookWidget {
   const ResultScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GameCubit, GameState>(
-      buildWhen: (previous, current) => current.maybeMap(
-        result: (value) => true,
-        orElse: () => false,
-      ),
-      builder: (context, state) {
-        return Scaffold(
-          body: _ConfettiCanon(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: AppTheme.of(context).backgroundGradient,
-              ),
-              child: SafeArea(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: .center,
-                    spacing: 60,
-                    children: [
-                      _GameResultMessage(),
-                      AnimatedScoreSummary(
-                        duration: _animationDuration,
-                        backgroundColor: Colors.white.withAlpha(13),
-                      ),
-                      _ActionButtons(),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
+    return BlocProvider(
+      create: (context) => ResultCubit(),
+      child: _Body(),
     );
   }
 }
 
-class _ConfettiCanon extends StatefulWidget {
+class _Body extends StatelessWidget {
+  const _Body();
+
+  @override
+  Widget build(BuildContext context) {
+    return CubitLoader<ResultCubit, ResultState>(
+      child: Scaffold(
+        body: _ConfettiCanon(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: AppTheme.of(context).backgroundGradient,
+            ),
+            child: SafeArea(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: .center,
+                  spacing: 60,
+                  children: [
+                    _GameResultMessage(),
+                    AnimatedScoreSummary(
+                      duration: _animationDuration,
+                      backgroundColor: Colors.white.withAlpha(13),
+                    ),
+                    _ActionButtons(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ConfettiCanon extends HookWidget {
   const _ConfettiCanon({
     required this.child,
   });
@@ -57,64 +66,53 @@ class _ConfettiCanon extends StatefulWidget {
   final Widget child;
 
   @override
-  State<_ConfettiCanon> createState() => _ConfettiCanonState();
-}
+  Widget build(BuildContext context) {
+    final isDraw = context.select((ResultCubit cubit) {
+      return cubit.state.mapOrNull(
+        success: (value) => value.winner == null,
+      );
+    });
+    final confettiOptions = useMemoized(() {
+      return ConfettiOptions(
+        particleCount: 100,
+        spread: 70,
+        startVelocity: 30,
+        y: 0.5,
+      );
+    }, []);
 
-class _ConfettiCanonState extends State<_ConfettiCanon> {
-  late final ConfettiController leftCanonController;
-  late final ConfettiController rightCanonController;
+    useEffect(() {
+      if (isDraw == null) return null;
 
-  final confettiOptions = ConfettiOptions(
-    particleCount: 100,
-    spread: 70,
-    startVelocity: 30,
-    y: 0.5,
-  );
+      late final ConfettiController leftCanonController;
+      late final ConfettiController rightCanonController;
 
-  @override
-  void initState() {
-    super.initState();
-
-    final isDraw = context.read<GameCubit>().state.maybeMap(
-      result: (value) => value.isDraw,
-      orElse: () => false,
-    );
-
-    Future.delayed(Duration(seconds: 1), () {
-      final localContext = context;
-      if (localContext.mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         leftCanonController = Confetti.launch(
-          localContext,
+          context,
           options: confettiOptions.copyWith(
             particleCount: isDraw ? 1 : 100,
             x: 0,
             angle: 60,
           ),
         );
-
         rightCanonController = Confetti.launch(
-          localContext,
+          context,
           options: confettiOptions.copyWith(
             particleCount: isDraw ? 1 : 100,
             x: 1,
             angle: 120,
           ),
         );
-      }
-    });
-  }
+      });
 
-  @override
-  void dispose() {
-    leftCanonController.kill();
-    rightCanonController.kill();
+      return () {
+        leftCanonController.kill();
+        rightCanonController.kill();
+      };
+    }, [isDraw]);
 
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.child;
+    return child;
   }
 }
 
@@ -125,11 +123,8 @@ class _GameResultMessage extends HookWidget
   @override
   Widget build(BuildContext context) {
     final theme = AppTheme.of(context);
-    final (isXWinner, isOWinner, isDraw) = context.select((GameCubit cubit) {
-      return cubit.state.maybeMap(
-        result: (value) => (value.isXWinner, value.isOWinner, value.isDraw),
-        orElse: () => (false, false, false),
-      );
+    final (isXWinner, isOWinner, isDraw) = context.select((ResultCubit cubit) {
+      return (false, false, true);
     });
 
     final winnerColor = isXWinner
@@ -326,7 +321,7 @@ class _ActionButtons extends HookWidget with FadeMotionMixin {
           const SizedBox(height: 16),
           TextButton.icon(
             onPressed: () {
-              context.read<GameCubit>().newGame();
+              GoRouter.of(context).go('/');
             },
             icon: const Icon(
               Icons.home_rounded,

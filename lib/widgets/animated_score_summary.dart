@@ -19,13 +19,6 @@ class AnimatedScoreSummary extends HookWidget with FadeMotionMixin {
 
   @override
   Widget build(BuildContext context) {
-    final playingPlayer = context.select((GameCubit cubit) {
-      return cubit.state.mapOrNull(
-        game: (value) => value.playing,
-      );
-    });
-    final localShowActivePlayerIndicator = showActivePlayerIndicator ?? false;
-
     final controller = useAnimationController(
       duration: duration,
     );
@@ -57,11 +50,7 @@ class AnimatedScoreSummary extends HookWidget with FadeMotionMixin {
         child: Row(
           mainAxisAlignment: .spaceEvenly,
           children: [
-            _XPlayerScore(
-              isSelected:
-                  localShowActivePlayerIndicator &&
-                  playingPlayer?.type == ActionType.x,
-            ),
+            _XPlayerScore(),
             SizedBox(
               height: 50,
               child: VerticalDivider(
@@ -69,11 +58,7 @@ class AnimatedScoreSummary extends HookWidget with FadeMotionMixin {
                 thickness: 1,
               ),
             ),
-            _OPlayerScore(
-              isSelected:
-                  localShowActivePlayerIndicator &&
-                  playingPlayer?.type == ActionType.o,
-            ),
+            _OPlayerScore(),
           ],
         ),
       ),
@@ -82,11 +67,7 @@ class AnimatedScoreSummary extends HookWidget with FadeMotionMixin {
 }
 
 class _XPlayerScore extends StatelessWidget {
-  const _XPlayerScore({
-    this.isSelected,
-  });
-
-  final bool? isSelected;
+  const _XPlayerScore();
 
   @override
   Widget build(BuildContext context) {
@@ -103,11 +84,7 @@ class _XPlayerScore extends StatelessWidget {
 }
 
 class _OPlayerScore extends StatelessWidget {
-  const _OPlayerScore({
-    this.isSelected,
-  });
-
-  final bool? isSelected;
+  const _OPlayerScore();
 
   @override
   Widget build(BuildContext context) {

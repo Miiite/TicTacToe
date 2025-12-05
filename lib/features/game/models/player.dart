@@ -18,4 +18,7 @@ abstract class Player with _$Player {
     required ActionType type,
     @Default(0) int score,
   }) = _Player;
+
+  factory Player.x() => const Player(type: ActionType.x);
+  factory Player.o() => const Player(type: ActionType.o);
 }
