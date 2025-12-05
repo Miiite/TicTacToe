@@ -51,7 +51,7 @@ class _Title extends StatelessWidget {
           children: [
             DecoratedBox(
               decoration: BoxDecoration(
-                color: AppTheme.of(context).red,
+                color: AppTheme.of(context).primaryPlayerColor,
                 borderRadius: .circular(8),
               ),
               child: Padding(
@@ -69,7 +69,7 @@ class _Title extends StatelessWidget {
             const SizedBox(width: 8),
             DecoratedBox(
               decoration: BoxDecoration(
-                color: AppTheme.of(context).green,
+                color: AppTheme.of(context).secondaryPlayerColor,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Padding(
@@ -190,7 +190,9 @@ class _AnimatedGridItem extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: isSelected
-              ? (index.isEven ? theme.red : theme.green)
+              ? (index.isEven
+                    ? theme.primaryPlayerColor
+                    : theme.secondaryPlayerColor)
               : Colors.white,
           borderRadius: .circular(4),
         ),

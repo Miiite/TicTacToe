@@ -123,8 +123,8 @@ class __PressableState extends State<_Pressable> {
 extension on ActionType {
   Color getTypeColor(AppThemeData theme) {
     return switch (this) {
-      ActionType.x => theme.red,
-      ActionType.o => theme.green,
+      ActionType.x => theme.primaryPlayerColor,
+      ActionType.o => theme.secondaryPlayerColor,
     };
   }
 }

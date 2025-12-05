@@ -27,6 +27,4 @@ sealed class ResultState with _$ResultState {
     required Player xPlayer,
     required Player oPlayer,
   }) = _Result;
-
-  ResultState._();
 }

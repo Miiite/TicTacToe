@@ -27,7 +27,7 @@ class TicTacToeApp extends StatelessWidget {
         debugShowCheckedModeBanner: true,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
-            seedColor: defaultTheme.green,
+            seedColor: defaultTheme.secondaryPlayerColor,
             brightness: Brightness.dark,
           ),
           useMaterial3: true,

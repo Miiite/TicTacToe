@@ -130,11 +130,7 @@ class _Body extends StatelessWidget {
                   child: _GameBoard(),
                 ),
                 const Spacer(),
-                AnimatedScoreSummary(
-                  duration: .zero,
-                  backgroundColor: const Color(0xFF2D3E50),
-                  showActivePlayerIndicator: true,
-                ),
+                _AnimatedScoreSummary(),
                 const Spacer(),
                 _ResetBoardButton(),
                 const SizedBox(height: 16),
@@ -237,6 +233,24 @@ class _GameBoard extends HookWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+class _AnimatedScoreSummary extends StatelessWidget {
+  const _AnimatedScoreSummary();
+
+  @override
+  Widget build(BuildContext context) {
+    final (xscore, oscore) = context.select((GameCubit cubit) {
+      return (cubit.state.xPlayer.score, cubit.state.oPlayer.score);
+    });
+
+    return AnimatedScoreSummary(
+      duration: .zero,
+      backgroundColor: AppTheme.of(context).scoreTileBackgroundColor,
+      xPlayerScore: xscore,
+      oPlayerScore: oscore,
     );
   }
 }

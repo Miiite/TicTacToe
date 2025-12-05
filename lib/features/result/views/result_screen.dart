@@ -4,7 +4,7 @@ import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tictactoe/design_system/design_system.dart';
-import 'package:tictactoe/features/game/blocs/game_cubit.dart';
+import 'package:tictactoe/features/game/navigation/route.dart';
 import 'package:tictactoe/features/result/blocs/result_cubit.dart';
 import 'package:tictactoe/widgets/animated_score_summary.dart';
 import 'package:tictactoe/widgets/cubit_loader.dart';
@@ -42,10 +42,7 @@ class _Body extends StatelessWidget {
                   spacing: 60,
                   children: [
                     _GameResultMessage(),
-                    AnimatedScoreSummary(
-                      duration: _animationDuration,
-                      backgroundColor: Colors.white.withAlpha(13),
-                    ),
+                    _AnimatedScoreSummary(),
                     _ActionButtons(),
                   ],
                 ),
@@ -128,9 +125,9 @@ class _GameResultMessage extends HookWidget
     });
 
     final winnerColor = isXWinner
-        ? theme.red
+        ? theme.primaryPlayerColor
         : isOWinner
-        ? theme.green
+        ? theme.secondaryPlayerColor
         : Colors.white70;
 
     final controller = useAnimationController(
@@ -169,6 +166,25 @@ class _GameResultMessage extends HookWidget
           ],
         ),
       ),
+    );
+  }
+}
+
+class _AnimatedScoreSummary extends StatelessWidget {
+  const _AnimatedScoreSummary();
+
+  @override
+  Widget build(BuildContext context) {
+    final (xscore, oscore) = context.select((ResultCubit cubit) {
+      final state = cubit.state.mapOrNull(success: (value) => value);
+      return (state?.xPlayer.score, state?.oPlayer.score);
+    });
+
+    return AnimatedScoreSummary(
+      duration: _animationDuration,
+      backgroundColor: Colors.white.withAlpha(13),
+      xPlayerScore: xscore ?? 0,
+      oPlayerScore: oscore ?? 0,
     );
   }
 }
@@ -313,7 +329,7 @@ class _ActionButtons extends HookWidget with FadeMotionMixin {
         children: [
           MainButton(
             onTap: () {
-              context.read<GameCubit>().newGameRound();
+              GoRouter.of(context).go('/${GameRoute.route}');
             },
             icon: Icons.replay_rounded,
             title: 'PLAY AGAIN',

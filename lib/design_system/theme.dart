@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class AppThemeData {
   static const AppThemeData regular = AppThemeData(
-    red: Color(0xFFE63946),
-    green: Color(0xFF4ECDC4),
+    primaryPlayerColor: Color(0xFFE63946),
+    secondaryPlayerColor: Color(0xFF4ECDC4),
+    scoreTileBackgroundColor: Color(0xFF2D3E50),
     backgroundGradient: LinearGradient(
       colors: [Color(0xFF0D1B2A), Color(0xFF1B263B), Color(0xFF415A77)],
     ),
@@ -19,16 +20,18 @@ class AppThemeData {
   );
 
   const AppThemeData({
-    required this.red,
-    required this.green,
+    required this.primaryPlayerColor,
+    required this.secondaryPlayerColor,
+    required this.scoreTileBackgroundColor,
     required this.backgroundGradient,
     required this.redGradient,
     required this.greenGradient,
     required this.cellGradient,
   });
 
-  final Color red;
-  final Color green;
+  final Color primaryPlayerColor;
+  final Color secondaryPlayerColor;
+  final Color scoreTileBackgroundColor;
   final LinearGradient backgroundGradient;
   final LinearGradient redGradient;
   final LinearGradient greenGradient;
@@ -37,14 +40,16 @@ class AppThemeData {
   AppThemeData copyWith({
     Color? red,
     Color? green,
+    Color? darkGray,
     LinearGradient? backgroundGradient,
     LinearGradient? redGradient,
     LinearGradient? greenGradient,
     LinearGradient? cellGradient,
   }) {
     return AppThemeData(
-      red: red ?? this.red,
-      green: green ?? this.green,
+      primaryPlayerColor: red ?? this.primaryPlayerColor,
+      secondaryPlayerColor: green ?? this.secondaryPlayerColor,
+      scoreTileBackgroundColor: darkGray ?? this.scoreTileBackgroundColor,
       backgroundGradient: backgroundGradient ?? this.backgroundGradient,
       redGradient: redGradient ?? this.redGradient,
       greenGradient: greenGradient ?? this.greenGradient,
