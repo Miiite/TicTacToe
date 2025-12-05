@@ -221,7 +221,7 @@ class _ResetBoardButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton.icon(
       onPressed: () {
-        context.read<GameCubit>().resetGame();
+        context.read<GameCubit>().newGameRound();
       },
       icon: const Icon(
         Icons.refresh_rounded,

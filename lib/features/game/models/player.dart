@@ -13,7 +13,7 @@ enum ActionType {
 }
 
 @freezed
-sealed class Player with _$Player {
+abstract class Player with _$Player {
   const factory Player({
     required ActionType type,
     @Default(0) int score,

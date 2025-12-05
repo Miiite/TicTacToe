@@ -38,20 +38,10 @@ class GameCubit extends Cubit<GameState> {
     state.mapOrNull(
       game: ((game) {
         final newState = game.selectCell(index);
+        final winnerType = newState.getWinnerType();
 
-        if (!newState.isGameOver) {
-          emit(newState.nextTurn());
-        } else if (newState.isDraw) {
-          emit(
-            GameState.result(
-              oPlayer: state.oPlayer,
-              xPlayer: state.xPlayer,
-              board: newState.board,
-            ),
-          );
-        } else {
-          final winnerType = newState.getWinnerType();
-
+        // Game is over and has a winner
+        if (winnerType != null) {
           emit(
             GameState.result(
               board: newState.board,
@@ -68,19 +58,25 @@ class GameCubit extends Cubit<GameState> {
                   : state.oPlayer,
             ),
           );
+          return;
         }
-      }),
-    );
-  }
 
-  void resetGame() {
-    emit(
-      GameState.game(
-        playing: random.nextBool() ? state.xPlayer : state.oPlayer,
-        board: List.filled(gridSize, null),
-        oPlayer: state.oPlayer,
-        xPlayer: state.xPlayer,
-      ),
+        // Game is over and is a draw
+        if (newState.isDraw) {
+          emit(
+            GameState.result(
+              oPlayer: state.oPlayer,
+              xPlayer: state.xPlayer,
+              board: newState.board,
+            ),
+          );
+
+          return;
+        }
+
+        // Game is not over yet
+        emit(newState.nextTurn());
+      }),
     );
   }
 
@@ -132,10 +128,6 @@ extension ResultExtensions on Result {
 }
 
 extension on _Game {
-  bool get isGameOver {
-    return getWinnerType() != null || isDraw;
-  }
-
   bool get isDraw {
     return board.every((cell) => cell != null);
   }

@@ -113,7 +113,10 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _Player():
-return $default(_that);}
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -172,7 +175,10 @@ return $default(_that.type,_that.score);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ActionType type,  int score)  $default,) {final _that = this;
 switch (_that) {
 case _Player():
-return $default(_that.type,_that.score);}
+return $default(_that.type,_that.score);case _:
+  throw StateError('Unexpected subclass');
+
+}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
