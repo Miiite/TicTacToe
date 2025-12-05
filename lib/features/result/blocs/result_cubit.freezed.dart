@@ -223,12 +223,12 @@ _$ResultCopyWith<_Result> get copyWith => __$ResultCopyWithImpl<_Result>(this, _
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Result&&(identical(other.result, result) || other.result == result)&&(identical(other.score, score) || other.score == score));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Result&&(identical(other.result, result) || other.result == result)&&const DeepCollectionEquality().equals(other.score, score));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,result,score);
+int get hashCode => Object.hash(runtimeType,result,const DeepCollectionEquality().hash(score));
 
 @override
 String toString() {
@@ -247,7 +247,7 @@ $Res call({
 });
 
 
-$GameResultCopyWith<$Res>? get result;$GameScoreCopyWith<$Res> get score;
+$GameResultCopyWith<$Res>? get result;
 
 }
 /// @nodoc
@@ -260,10 +260,10 @@ class __$ResultCopyWithImpl<$Res>
 
 /// Create a copy of ResultState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? result = freezed,Object? score = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? result = freezed,Object? score = freezed,}) {
   return _then(_Result(
 result: freezed == result ? _self.result : result // ignore: cast_nullable_to_non_nullable
-as GameResult?,score: null == score ? _self.score : score // ignore: cast_nullable_to_non_nullable
+as GameResult?,score: freezed == score ? _self.score : score // ignore: cast_nullable_to_non_nullable
 as GameScore,
   ));
 }
@@ -279,15 +279,6 @@ $GameResultCopyWith<$Res>? get result {
 
   return $GameResultCopyWith<$Res>(_self.result!, (value) {
     return _then(_self.copyWith(result: value));
-  });
-}/// Create a copy of ResultState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$GameScoreCopyWith<$Res> get score {
-  
-  return $GameScoreCopyWith<$Res>(_self.score, (value) {
-    return _then(_self.copyWith(score: value));
   });
 }
 }

@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:tictactoe/features/game/models/game_result.dart';
-import 'package:tictactoe/features/game/models/game_score.dart';
-import 'package:tictactoe/features/game/use_cases/game_score_use_cases.dart';
+import 'package:tictactoe/features/game_score/use_cases/game_score_use_cases.dart';
+import 'package:tictactoe/features/game_score/models/game_score.dart';
 import 'package:tictactoe/widgets/cubit_loader.dart';
 
 part 'result_cubit.freezed.dart';

@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:tictactoe/features/game/models/game_board.dart';
 import 'package:tictactoe/features/game/models/game_result.dart';
-import 'package:tictactoe/features/game/models/game_score.dart';
 import 'package:tictactoe/features/game/models/player.dart';
-import 'package:tictactoe/features/game/use_cases/game_score_use_cases.dart';
+import 'package:tictactoe/features/game_score/models/game_score.dart';
+import 'package:tictactoe/features/game_score/use_cases/game_score_use_cases.dart';
 import 'package:tictactoe/widgets/cubit_loader.dart';
 
 part 'game_cubit.freezed.dart';
@@ -38,23 +38,14 @@ class GameCubit extends LoadableCubit<GameState> {
     [2, 4, 6], // Anti-diagonal
   ];
 
-  final random = Random();
-
   final SaveGameScoreUseCase saveGameScoreUseCase;
   final GetGameScoreUseCase getGameScoreUseCase;
+  final random = Random();
 
   @override
   Future<void> load() async {
     newGameRound();
-
-    final gameScore = await getGameScoreUseCase();
-
-    emit(
-      state.copyWith(
-        oPlayer: state.oPlayer.copyWith(score: gameScore?.playerOScore ?? 0),
-        xPlayer: state.xPlayer.copyWith(score: gameScore?.playerXScore ?? 0),
-      ),
-    );
+    _loadAndDisplayGameScore();
   }
 
   Future<void> selectCell(int index) async {
@@ -116,6 +107,17 @@ class GameCubit extends LoadableCubit<GameState> {
       ),
     );
   }
+
+  void _loadAndDisplayGameScore() async {
+    final gameScore = await getGameScoreUseCase();
+
+    emit(
+      state.copyWith(
+        oPlayer: state.oPlayer.copyWith(score: gameScore.playerOScore),
+        xPlayer: state.xPlayer.copyWith(score: gameScore.playerXScore),
+      ),
+    );
+  }
 }
 
 @freezed
@@ -156,7 +158,7 @@ extension on GameState {
     return copyWith(
       board: List.from(board)..[index] = localPlaying.type,
     );
-  } 
+  }
 
   GameState nextTurn() {
     final localPlaying = playing;

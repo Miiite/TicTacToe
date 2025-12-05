@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tictactoe/features/game/blocs/game_cubit.dart';
 import 'package:tictactoe/features/game/models/game_result.dart';
-import 'package:tictactoe/features/game/models/game_score.dart';
 import 'package:tictactoe/features/game/models/player.dart';
+import 'package:tictactoe/features/game_score/models/game_score.dart';
 
 import '../../../mocks.dart';
 
@@ -38,7 +38,7 @@ void main() {
 
   group('GameCubit', () {
     test(
-      'When creating the gameCubit it should be in an initial state by default',
+      'After loading the cubit, both player objects should be initialized',
       () async {
         final cubit = GameCubit(
           getGameScoreUseCase: mockGetGameScoreUseCase,
@@ -69,6 +69,22 @@ void main() {
         build: () => GameCubit(
           getGameScoreUseCase: mockGetGameScoreUseCase,
           saveGameScoreUseCase: mockSaveGameScoreUseCase,
+        ),
+        seed: () => GameState(
+          playing: xPlayer,
+          board: [
+            null,
+            null,
+            ActionType.x,
+            null,
+            null,
+            ActionType.o,
+            null,
+            null,
+            ActionType.x,
+          ],
+          xPlayer: xPlayer,
+          oPlayer: oPlayer,
         ),
         act: (cubit) => cubit.newGameRound(),
         expect: () => [

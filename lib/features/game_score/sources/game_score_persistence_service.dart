@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tictactoe/features/game/models/game_score.dart';
+import 'package:tictactoe/features/game_score/models/game_score.dart';
 
 class GameScorePersistenceService {
   static const _gameScoreKey = 'game_score';
