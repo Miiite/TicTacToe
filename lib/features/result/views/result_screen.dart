@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:tictactoe/design_system/design_system.dart';
-import 'package:tictactoe/extensions/build_context_extensions.dart';
 import 'package:tictactoe/features/game/blocs/game_cubit.dart';
 import 'package:tictactoe/widgets/animated_score_summary.dart';
 
@@ -119,7 +118,8 @@ class _ConfettiCanonState extends State<_ConfettiCanon> {
   }
 }
 
-class _GameResultMessage extends HookWidget {
+class _GameResultMessage extends HookWidget
+    with FadeMotionMixin, ScaleMotionMixin {
   const _GameResultMessage();
 
   @override
@@ -141,11 +141,11 @@ class _GameResultMessage extends HookWidget {
     final controller = useAnimationController(
       duration: _animationDuration,
     );
-    final fadeAnimation = useMemoized(() {
-      return context.fadeAnimation(controller: controller);
+    final fade = useMemoized(() {
+      return fadeAnimation(controller: controller);
     }, [controller]);
-    final scaleAnimation = useMemoized(() {
-      return context.scaleAnimation(controller: controller);
+    final scale = useMemoized(() {
+      return scaleAnimation(controller: controller);
     }, [controller]);
 
     useEffect(
@@ -157,9 +157,9 @@ class _GameResultMessage extends HookWidget {
       [controller],
     );
     return FadeTransition(
-      opacity: fadeAnimation,
+      opacity: fade,
       child: ScaleTransition(
-        scale: scaleAnimation,
+        scale: scale,
         child: Column(
           children: [
             _Icon(winnerColor: winnerColor, isDraw: isDraw),
@@ -292,7 +292,7 @@ class _Icon extends StatelessWidget {
   }
 }
 
-class _ActionButtons extends HookWidget {
+class _ActionButtons extends HookWidget with FadeMotionMixin {
   const _ActionButtons();
 
   @override
@@ -300,6 +300,9 @@ class _ActionButtons extends HookWidget {
     final controller = useAnimationController(
       duration: _animationDuration,
     );
+    final fade = useMemoized(() {
+      return fadeAnimation(controller: controller);
+    }, [controller]);
 
     useEffect(
       () {
@@ -310,7 +313,7 @@ class _ActionButtons extends HookWidget {
     );
 
     return FadeTransition(
-      opacity: context.fadeAnimation(controller: controller),
+      opacity: fade,
       child: Column(
         children: [
           MainButton(
