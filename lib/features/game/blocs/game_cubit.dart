@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tictactoe/models/player.dart';
+import 'package:tictactoe/features/game/models/player.dart';
 
 part 'game_cubit.freezed.dart';
 

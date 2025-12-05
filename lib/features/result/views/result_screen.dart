@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:tictactoe/bloc/game_cubit.dart';
+import 'package:tictactoe/design_system/design_system.dart';
 import 'package:tictactoe/extensions/build_context_extensions.dart';
-import 'package:tictactoe/utils/game_colors.dart';
+import 'package:tictactoe/features/game/blocs/game_cubit.dart';
 import 'package:tictactoe/widgets/animated_score_summary.dart';
-import 'package:tictactoe/widgets/main_button.dart';
 
 const _animationDuration = Duration(milliseconds: 800);
 
@@ -25,7 +24,7 @@ class ResultScreen extends StatelessWidget {
           body: _ConfettiCanon(
             child: DecoratedBox(
               decoration: BoxDecoration(
-                gradient: GameColors.backgroundGradient,
+                gradient: AppTheme.of(context).backgroundGradient,
               ),
               child: SafeArea(
                 child: Center(
@@ -125,6 +124,7 @@ class _GameResultMessage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = AppTheme.of(context);
     final (isXWinner, isOWinner, isDraw) = context.select((GameCubit cubit) {
       return cubit.state.maybeMap(
         result: (value) => (value.isXWinner, value.isOWinner, value.isDraw),
@@ -133,9 +133,9 @@ class _GameResultMessage extends HookWidget {
     });
 
     final winnerColor = isXWinner
-        ? GameColors.red
+        ? theme.red
         : isOWinner
-        ? GameColors.green
+        ? theme.green
         : Colors.white70;
 
     final controller = useAnimationController(

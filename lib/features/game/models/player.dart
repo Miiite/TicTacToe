@@ -1,7 +1,4 @@
-import 'dart:ui';
-
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:tictactoe/extensions/player_type_extensions.dart';
 
 part 'player.freezed.dart';
 
@@ -21,10 +18,4 @@ sealed class Player with _$Player {
     required ActionType type,
     @Default(0) int score,
   }) = _Player;
-
-  const Player._();
-
-  String get symbol => type.symbol;
-
-  Color get color => type.color;
 }

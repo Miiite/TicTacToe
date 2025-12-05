@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tictactoe/bloc/game_cubit.dart';
+import 'package:tictactoe/features/game/blocs/game_cubit.dart';
 import 'package:tictactoe/features/game/navigation/route.dart';
 import 'package:tictactoe/features/result/navigation/route.dart';
 

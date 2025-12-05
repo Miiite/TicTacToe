@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:tictactoe/bloc/game_cubit.dart';
+import 'package:tictactoe/design_system/theme.dart';
 import 'package:tictactoe/extensions/build_context_extensions.dart';
-import 'package:tictactoe/models/player.dart';
-import 'package:tictactoe/utils/game_colors.dart';
+import 'package:tictactoe/features/game/blocs/game_cubit.dart';
+import 'package:tictactoe/features/game/models/player.dart';
 
 class AnimatedScoreSummary extends HookWidget {
   const AnimatedScoreSummary({
@@ -98,7 +98,7 @@ class _XPlayerScore extends StatelessWidget {
     return _ScoreSummary(
       symbol: ActionType.x.symbol,
       score: score,
-      color: GameColors.red,
+      color: AppTheme.of(context).red,
     );
   }
 }
@@ -119,7 +119,7 @@ class _OPlayerScore extends StatelessWidget {
     return _ScoreSummary(
       symbol: ActionType.o.symbol,
       score: score,
-      color: GameColors.green,
+      color: AppTheme.of(context).green,
     );
   }
 }

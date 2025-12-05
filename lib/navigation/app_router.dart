@@ -10,6 +10,6 @@ class AppRouter {
       MenuRoute(),
       GameRoute(),
       ResultRoute(),
-    ],
+    ],    
   );
 }

@@ -4,10 +4,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:tictactoe/bloc/game_cubit.dart';
-import 'package:tictactoe/models/player.dart';
-import 'package:tictactoe/utils/game_colors.dart';
-import 'package:tictactoe/widgets/main_button.dart';
+import 'package:tictactoe/design_system/design_system.dart';
+import 'package:tictactoe/features/game/blocs/game_cubit.dart';
+import 'package:tictactoe/features/game/models/player.dart';
 
 class NewGameScreen extends StatelessWidget {
   const NewGameScreen({super.key});
@@ -17,7 +16,7 @@ class NewGameScreen extends StatelessWidget {
     return Scaffold(
       body: DecoratedBox(
         decoration: BoxDecoration(
-          gradient: GameColors.backgroundGradient,
+          gradient: AppTheme.of(context).backgroundGradient,
         ),
         child: SafeArea(
           child: Center(
@@ -52,7 +51,7 @@ class _Title extends StatelessWidget {
           children: [
             DecoratedBox(
               decoration: BoxDecoration(
-                color: GameColors.red,
+                color: AppTheme.of(context).red,
                 borderRadius: .circular(8),
               ),
               child: Padding(
@@ -70,7 +69,7 @@ class _Title extends StatelessWidget {
             const SizedBox(width: 8),
             DecoratedBox(
               decoration: BoxDecoration(
-                color: GameColors.green,
+                color: AppTheme.of(context).green,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Padding(
@@ -184,13 +183,14 @@ class _AnimatedGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = AppTheme.of(context);
     return AnimatedOpacity(
       opacity: isSelected ? 1.0 : 0.15,
       duration: Duration(milliseconds: isSelected ? 400 : 0),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: isSelected
-              ? (index.isEven ? GameColors.red : GameColors.green)
+              ? (index.isEven ? theme.red : theme.green)
               : Colors.white,
           borderRadius: .circular(4),
         ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:tictactoe/bloc/game_cubit.dart';
-import 'package:tictactoe/models/player.dart';
-import 'package:tictactoe/utils/game_colors.dart';
+import 'package:tictactoe/design_system/theme.dart';
+import 'package:tictactoe/features/game/blocs/game_cubit.dart';
+import 'package:tictactoe/features/game/models/player.dart';
 import 'package:tictactoe/widgets/animated_score_summary.dart';
 import 'package:tictactoe/widgets/game_cell.dart';
 
@@ -14,15 +14,16 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = AppTheme.of(context);
     final backgroundGradient = context.select((GameCubit cubit) {
       return cubit.state.maybeMap(
         game: (value) {
           return switch (value.playing.type) {
-            ActionType.x => GameColors.redGradient,
-            ActionType.o => GameColors.greenGradient,
+            ActionType.x => theme.redGradient,
+            ActionType.o => theme.greenGradient,
           };
         },
-        orElse: () => GameColors.backgroundGradient,
+        orElse: () => theme.backgroundGradient,
       );
     });
 

@@ -200,8 +200,8 @@ return $default(_that.type,_that.score);case _:
 /// @nodoc
 
 
-class _Player extends Player {
-  const _Player({required this.type, this.score = 0}): super._();
+class _Player implements Player {
+  const _Player({required this.type, this.score = 0});
   
 
 @override final  ActionType type;

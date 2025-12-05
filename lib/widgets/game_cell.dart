@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:tictactoe/extensions/player_type_extensions.dart';
-import 'package:tictactoe/models/player.dart';
-import 'package:tictactoe/utils/game_colors.dart';
+import 'package:tictactoe/design_system/theme.dart';
+import 'package:tictactoe/features/game/models/player.dart';
 
 class GameCell extends HookWidget {
   const GameCell({
@@ -18,6 +17,7 @@ class GameCell extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = AppTheme.of(context);
     final animationController = useAnimationController(
       keys: [playerType],
       duration: const Duration(milliseconds: 200),
@@ -36,11 +36,13 @@ class GameCell extends HookWidget {
       return null;
     });
 
+    final playerTypeColor = playerType?.getTypeColor(theme);
+
     return _Pressable(
       onTap: playerType == null ? onTap : null,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          gradient: GameColors.cellGradient,
+          gradient: AppTheme.of(context).cellGradient,
           borderRadius: BorderRadius.circular(16),
           border: .all(
             color: Colors.white.withAlpha(25),
@@ -56,11 +58,11 @@ class GameCell extends HookWidget {
                     style: TextStyle(
                       fontSize: 48,
                       fontWeight: .bold,
-                      color: playerType?.color,
+                      color: playerTypeColor,
                       shadows: [
                         Shadow(
                           color:
-                              playerType?.color.withAlpha(130) ?? Colors.black,
+                              playerTypeColor?.withAlpha(130) ?? Colors.black,
                           blurRadius: 12,
                         ),
                       ],
@@ -115,5 +117,14 @@ class __PressableState extends State<_Pressable> {
         child: widget.child,
       ),
     );
+  }
+}
+
+extension on ActionType {
+  Color getTypeColor(AppThemeData theme) {
+    return switch (this) {
+      ActionType.x => theme.red,
+      ActionType.o => theme.green,
+    };
   }
 }
