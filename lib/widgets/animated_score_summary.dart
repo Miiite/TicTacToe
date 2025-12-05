@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:provider/provider.dart';
-import 'package:tictactoe/design_system/design_system.dart';
+import 'package:tictactoe/design/design_system/design_system.dart';
+import 'package:tictactoe/design/motion_design/motion_design.dart';
 import 'package:tictactoe/features/game/models/game_score.dart';
 import 'package:tictactoe/features/game/models/player.dart';
 

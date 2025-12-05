@@ -4,9 +4,11 @@ import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:tictactoe/design_system/design_system.dart';
+import 'package:tictactoe/design/design_system/design_system.dart';
+import 'package:tictactoe/design/motion_design/motion_design.dart';
 import 'package:tictactoe/features/game/models/game_result.dart';
 import 'package:tictactoe/features/game/models/game_score.dart';
+import 'package:tictactoe/features/game/models/player.dart';
 import 'package:tictactoe/features/game/navigation/route.dart';
 import 'package:tictactoe/features/game/repositories/game_score_repository.dart';
 import 'package:tictactoe/features/game/services/game_status_persistence_service.dart';
@@ -95,8 +97,9 @@ class _ConfettiCanon extends HookWidget {
   Widget build(BuildContext context) {
     final isDraw = context.select((ResultCubit cubit) {
       return cubit.state.mapOrNull(
-        success: (value) => value.result?.mapOrNull(
+        success: (value) => value.result?.map(
           draw: (_) => true,
+          winner: (_) => false,
         ),
       );
     });
@@ -116,22 +119,26 @@ class _ConfettiCanon extends HookWidget {
       late final ConfettiController rightCanonController;
 
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        leftCanonController = Confetti.launch(
-          context,
-          options: confettiOptions.copyWith(
-            particleCount: isDraw ? 1 : 100,
-            x: 0,
-            angle: 60,
-          ),
-        );
-        rightCanonController = Confetti.launch(
-          context,
-          options: confettiOptions.copyWith(
-            particleCount: isDraw ? 1 : 100,
-            x: 1,
-            angle: 120,
-          ),
-        );
+        Future<void>.delayed(Duration(milliseconds: 800)).then((value) {
+          if (context.mounted) {
+            leftCanonController = Confetti.launch(
+              context,
+              options: confettiOptions.copyWith(
+                particleCount: isDraw ? 1 : 100,
+                x: 0,
+                angle: 60,
+              ),
+            );
+            rightCanonController = Confetti.launch(
+              context,
+              options: confettiOptions.copyWith(
+                particleCount: isDraw ? 1 : 100,
+                x: 1,
+                angle: 120,
+              ),
+            );
+          }
+        });
       });
 
       return () {
@@ -152,7 +159,15 @@ class _GameResultMessage extends HookWidget
   Widget build(BuildContext context) {
     final theme = AppTheme.of(context);
     final (isXWinner, isOWinner, isDraw) = context.select((ResultCubit cubit) {
-      return (false, false, true);
+      return cubit.result?.map(
+            draw: (_) => (false, false, true),
+            winner: (winner) => (
+              winner.winner.type == ActionType.x,
+              winner.winner.type == ActionType.o,
+              false,
+            ),
+          ) ??
+          (false, false, true);
     });
 
     final winnerColor = isXWinner

@@ -11,8 +11,6 @@ import '../../../mocks.dart';
 void main() {
   late final xPlayer = Player(type: ActionType.x);
   late final oPlayer = Player(type: ActionType.o);
-  late MockSaveGameStatusUseCase mockSaveGameStatusUseCase;
-  late MockGetLatestGameStatusUseCase mockGetLatestGameStatusUseCase;
   late MockGetGameScoreUseCase mockGetGameScoreUseCase;
   late MockSaveGameScoreUseCase mockSaveGameScoreUseCase;
 
@@ -26,8 +24,6 @@ void main() {
   });
 
   setUp(() {
-    mockSaveGameStatusUseCase = MockSaveGameStatusUseCase();
-    mockGetLatestGameStatusUseCase = MockGetLatestGameStatusUseCase();
     mockGetGameScoreUseCase = MockGetGameScoreUseCase();
     mockSaveGameScoreUseCase = MockSaveGameScoreUseCase();
 
@@ -45,8 +41,6 @@ void main() {
       'When creating the gameCubit it should be in an initial state by default',
       () async {
         final cubit = GameCubit(
-          saveGameStatusUseCase: mockSaveGameStatusUseCase,
-          getLatestGameStatusUseCase: mockGetLatestGameStatusUseCase,
           getGameScoreUseCase: mockGetGameScoreUseCase,
           saveGameScoreUseCase: mockSaveGameScoreUseCase,
         );
@@ -73,8 +67,6 @@ void main() {
       blocTest<GameCubit, GameState>(
         'Starting a new game round should properly reset the grid',
         build: () => GameCubit(
-          saveGameStatusUseCase: mockSaveGameStatusUseCase,
-          getLatestGameStatusUseCase: mockGetLatestGameStatusUseCase,
           getGameScoreUseCase: mockGetGameScoreUseCase,
           saveGameScoreUseCase: mockSaveGameScoreUseCase,
         ),
@@ -91,8 +83,6 @@ void main() {
       blocTest<GameCubit, GameState>(
         'Selecting a cell should fill it with the current player\'s symbol',
         build: () => GameCubit(
-          saveGameStatusUseCase: mockSaveGameStatusUseCase,
-          getLatestGameStatusUseCase: mockGetLatestGameStatusUseCase,
           getGameScoreUseCase: mockGetGameScoreUseCase,
           saveGameScoreUseCase: mockSaveGameScoreUseCase,
         ),
@@ -116,8 +106,6 @@ void main() {
       blocTest<GameCubit, GameState>(
         'Selecting a cell should switch the turn to the other player',
         build: () => GameCubit(
-          saveGameStatusUseCase: mockSaveGameStatusUseCase,
-          getLatestGameStatusUseCase: mockGetLatestGameStatusUseCase,
           getGameScoreUseCase: mockGetGameScoreUseCase,
           saveGameScoreUseCase: mockSaveGameScoreUseCase,
         ),
@@ -141,8 +129,6 @@ void main() {
       blocTest<GameCubit, GameState>(
         'When a player wins a game, the proper state should be emited',
         build: () => GameCubit(
-          saveGameStatusUseCase: mockSaveGameStatusUseCase,
-          getLatestGameStatusUseCase: mockGetLatestGameStatusUseCase,
           getGameScoreUseCase: mockGetGameScoreUseCase,
           saveGameScoreUseCase: mockSaveGameScoreUseCase,
         ),

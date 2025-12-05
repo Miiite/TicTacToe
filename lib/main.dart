@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:tictactoe/design_system/theme.dart';
+import 'package:tictactoe/design/design_system/theme.dart';
 import 'package:tictactoe/navigation/app_router.dart';
 
 void main() async {

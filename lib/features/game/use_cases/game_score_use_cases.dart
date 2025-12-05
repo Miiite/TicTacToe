@@ -20,7 +20,9 @@ class GetGameScoreUseCase {
 
   final GameScoreRepository gameScoreRepository;
 
-  Future<GameScore?> call() {
-    return gameScoreRepository.getLatestGameScore();
+  Future<GameScore> call() async {
+    final score = await gameScoreRepository.getLatestGameScore();
+
+    return score ?? GameScore(playerXScore: 0, playerOScore: 0);
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:tictactoe/design_system/theme.dart';
+import 'package:tictactoe/design/design_system/theme.dart';
 import 'package:tictactoe/features/game/models/player.dart';
 
 class GameCell extends HookWidget {

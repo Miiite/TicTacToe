@@ -20,7 +20,7 @@ class ResultCubit extends LoadableCubit<ResultState> {
     emit(
       ResultState.success(
         result: result,
-        score: score ?? GameScore(playerXScore: 0, playerOScore: 0),
+        score: score,
       ),
     );
   }

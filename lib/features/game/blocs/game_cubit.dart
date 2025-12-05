@@ -156,7 +156,7 @@ extension on GameState {
     return copyWith(
       board: List.from(board)..[index] = localPlaying.type,
     );
-  }
+  } 
 
   GameState nextTurn() {
     final localPlaying = playing;

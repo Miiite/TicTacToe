@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:tictactoe/design_system/theme.dart';
+import 'package:tictactoe/design/design_system/theme.dart';
 import 'package:tictactoe/features/game/blocs/game_cubit.dart';
 import 'package:tictactoe/features/game/models/game_score.dart';
 import 'package:tictactoe/features/game/models/player.dart';
